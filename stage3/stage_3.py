@@ -223,7 +223,7 @@ class Character:
     def handle_event(self, event):
         # ***************************************
         # ->,<-,↑,↓ 키 입력시 캐릭터 이동
-        # 스테이지 2 에서는 x 값을 12 씩 이동
+        # 스테이지 3 에서는 x 값을 12 씩 이동
         # ***************************************
         if event.type == SDL_KEYDOWN:
             if event.key == SDLK_RIGHT:

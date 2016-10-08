@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f5f2cae9-1e9d-4ec5-8d57-ea769df015fa" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/stage2/stage_2.py" afterPath="$PROJECT_DIR$/stage2/stage_2.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/stage3/stage_3.py" afterPath="$PROJECT_DIR$/stage3/stage_3.py" />
     </list>
     <ignored path="game_2dgp.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -25,18 +25,30 @@
       <file leaf-file-name="stage_1.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/stage1/stage_1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1919">
+            <state relative-caret-position="1900">
               <caret line="101" column="33" selection-start-line="101" selection-start-column="33" selection-end-line="101" selection-end-column="33" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="stage_2.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="stage_2.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/stage2/stage_2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="313">
+            <state relative-caret-position="1349">
               <caret line="72" column="25" selection-start-line="72" selection-start-column="25" selection-end-line="72" selection-end-column="25" />
+              <folding>
+                <element signature="e#0#20#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="stage_3.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/stage3/stage_3.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1036">
+              <caret line="225" column="16" selection-start-line="225" selection-start-column="16" selection-end-line="225" selection-end-column="16" />
               <folding>
                 <element signature="e#0#20#0" expanded="true" />
               </folding>
@@ -61,8 +73,8 @@
       <list>
         <option value="$PROJECT_DIR$/stage1/game_framework.py" />
         <option value="$PROJECT_DIR$/stage1/stage_1.py" />
-        <option value="$PROJECT_DIR$/stage3/stage_3.py" />
         <option value="$PROJECT_DIR$/stage2/stage_2.py" />
+        <option value="$PROJECT_DIR$/stage3/stage_3.py" />
       </list>
     </option>
   </component>
@@ -379,7 +391,7 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -414,6 +426,24 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/stage1/stage_1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1919">
+          <caret line="101" column="33" selection-start-line="101" selection-start-column="33" selection-end-line="101" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/stage2/stage_2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/stage1/stage_1.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1387">
@@ -458,7 +488,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/stage1/stage_1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1919">
+        <state relative-caret-position="1900">
           <caret line="101" column="33" selection-start-line="101" selection-start-column="33" selection-end-line="101" selection-end-column="33" />
           <folding />
         </state>
@@ -471,7 +501,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/stage3/stage_3.py" />
     <entry file="file://$USER_HOME$/Desktop/stage_1.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1557">
@@ -481,8 +510,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/stage2/stage_2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="313">
+        <state relative-caret-position="1349">
           <caret line="72" column="25" selection-start-line="72" selection-start-column="25" selection-end-line="72" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/stage3/stage_3.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1036">
+          <caret line="225" column="16" selection-start-line="225" selection-start-column="16" selection-end-line="225" selection-end-column="16" />
           <folding>
             <element signature="e#0#20#0" expanded="true" />
           </folding>
