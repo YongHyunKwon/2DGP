@@ -45,21 +45,30 @@ class Obstacle:
     # x: 20~480, y: 400, 속도: 5~10
     #***************************************
     def make(self):
-        self.x, self.y = random.randint(20, 480), 400
-        self.speed = random.randint(5, 10)
+        self.x, self.y  = random.randint(20, 480), 400
+        self.speed      = random.randint(5, 10)
 
     def update(self):
         #***************************************
         # y 값은 속도 값에 비례하게 하강
         # 땅 밑으로 장애물이 사라지면 make 호출
         #***************************************
-        self.y -=   self.speed
+        self.y -= self.speed
 
         if(self.y < -20):
             self.make()
 
+    def getcollisionbox(self):
+        return self.x - 40, self.y + 10, self.x - 10, self.y + 40
+
     def draw(self):
         self.image.draw(self.x, self.y)
+
+    #########################################
+    # 충돌 박스 테스트 코드
+    ########################################
+    def drawcollision(self):
+        draw_rectangle(*self.getcollisionbox())
 
 #***************************************
 # Character
@@ -67,45 +76,69 @@ class Obstacle:
 #***************************************
 class Character:
 
+    # ***************************************
+    # 캐릭터의 방향 및 시트 값
+    # ***************************************
+    LEFT_RUN, RIGHT_RUN, LEFT_STAND, RIGHT_STAND = 5, 4, 1, 0
+
     def __init__(self):
         self.x, self.y  = 250, 40
         self.speed      = 10
-        self.frame      = 0
+        self.frame      = random.randint(0, 7)
+        self.state      = self.RIGHT_STAND
         self.image      = load_image('stage_1_cha.png')
-
         # ***************************************
         # 최초 생명력은 3
         # ***************************************
-        self.life_cnt = 3
+        self.life_cnt   = 3
         self.life_image = load_image('heart.png')
 
     def handle_event(self, event):
         # ***************************************
         # ->,<- 키 입력시 캐릭터 이동
-        # 스테이지1 에서는 x 값을 10 씩 이동
         # ***************************************
-        if event.type == SDL_KEYDOWN:
-            if event.key == SDLK_RIGHT:
-                self.x += self.speed
-            elif event.key == SDLK_LEFT:
-                self.x -= self.speed
+        if (event.type, event.key) == (SDL_KEYDOWN, SDLK_LEFT):
+            if self.state in (self.RIGHT_STAND, self.LEFT_STAND):
+                self.state = self.LEFT_RUN
+
+        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_RIGHT):
+            if self.state in (self.RIGHT_STAND, self.LEFT_STAND):
+                self.state = self.RIGHT_RUN
+
+        elif (event.type, event.key) == (SDL_KEYUP, SDLK_LEFT):
+            if self.state in (self.LEFT_RUN,):
+                self.state = self.LEFT_STAND
+
+        elif (event.type, event.key) == (SDL_KEYUP, SDLK_RIGHT):
+            if self.state in (self.RIGHT_RUN,):
+                self.state = self.RIGHT_STAND
 
     def update(self):
         self.frame = (self.frame + 1) % 8
         # ***************************************
         # 화면을 벗어나지 않게 x 값을 조정
+        # 스테이지1 에서는 x 값을 10 씩 이동
         # ***************************************
-        if self.x > 500:
-            self.x = 500
-        elif self.x < 0:
-            self.x = 0
+        if self.state == self.RIGHT_RUN:
+            self.x = min(500, self.x + self.speed)
+        elif self.state == self.LEFT_RUN:
+            self.x = max(0, self.x - self.speed)
 
         if(self.life_cnt <= 0):
             return False
 
-    def draw(self):
-        self.image.clip_draw(self.frame * 70, 0, 70, 70, self.x, self.y)
+    # ***************************************
+    # damage
+    # 장애물과 충돌시 생명력 1 감소
+    # ***************************************
+    def damage(self):
+        self.life_cnt = self.life_cnt - 1
 
+    def getcollisionbox(self):
+        return self.x - 15, self.y -30, self.x + 10, self.y + 25
+
+    def draw(self):
+        self.image.clip_draw(self.frame * 70, self.state * 70, 70, 70, self.x, self.y)
         # ***************************************
         # life_cnt 에 맞게 생명력 이미지를 draw
         # ***************************************
@@ -113,12 +146,17 @@ class Character:
             image_range = 30 * (i + 1)
             self.life_image.draw(image_range,375)
 
+    #########################################
+    # 충돌 박스 테스트 코드
+    #########################################
+    def drawcollision(self):
+        draw_rectangle(*self.getcollisionbox())
+
 def handle_events():
     global running
     global character
 
     events = get_events()
-
     # ***************************************
     # 종료키를 누르지 않는다면 캐릭터 이벤트 갱신
     # ***************************************
@@ -141,9 +179,6 @@ def lifetime():
     # ***************************************
     # 클리어 시간과 현재 시간과의 차이를 구함
     # ***************************************
-    #########################################
-    # 현재는 테스트용으로 시간을 5 초만 줌
-    #########################################
     life_time   = clear_time - time.time()
     str_time    = datetime.datetime.fromtimestamp(life_time).strftime('%S')
 
@@ -173,6 +208,15 @@ def stagefail():
     delay(3)
     running = False
 
+def collide(chr, obs):
+    left_chr, bottom_chr, right_chr, top_chr = chr.getcollisionbox()
+    left_obs, bottom_obs, right_obs, top_obs = obs.getcollisionbox()
+
+    if left_chr < right_obs and right_chr > left_obs and top_chr > bottom_obs:
+        return False
+
+    return True
+
 def main():
     open_canvas(500, 400)
 
@@ -185,9 +229,13 @@ def main():
     character   = Character()
     #***************************************
     # 스테이지 1 에서 장애물은 10개
+    # 클리어 시간은 30초
     #***************************************
     obstacle    = [Obstacle() for i in range(10)]
-    clear_time  = time.time() + 5
+    #########################################
+    # 현재는 테스트용으로 시간을 20 초만 줌
+    #########################################
+    clear_time  = time.time() + 20
     running     = True
 
     while running:
@@ -197,15 +245,22 @@ def main():
 
         back_ground.draw()
         character.draw()
+        character.drawcollision()
 
         for stone in obstacle:
             stone.draw()
+            stone.drawcollision()
             stone.update()
 
         lifetime()
 
         if(character.update() == False):
             stagefail()
+
+        for stone in obstacle:
+            if collide(character, stone) == False:
+                stone.make()
+                character.damage()
 
         update_canvas()
 
