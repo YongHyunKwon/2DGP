@@ -87,6 +87,7 @@ class Character:
         self.frame      = random.randint(0, 7)
         self.state      = self.RIGHT_STAND
         self.image      = load_image('stage_1_cha.png')
+        self.effect     = load_image('effect.png')
         # ***************************************
         # 최초 생명력은 3
         # ***************************************
@@ -97,20 +98,16 @@ class Character:
         # ***************************************
         # ->,<- 키 입력시 캐릭터 이동
         # ***************************************
-        if (event.type, event.key) == (SDL_KEYDOWN, SDLK_LEFT):
-            if self.state in (self.RIGHT_STAND, self.LEFT_STAND):
+        if event.type == SDL_KEYDOWN:
+            if event.key == SDLK_LEFT:
                 self.state = self.LEFT_RUN
-
-        elif (event.type, event.key) == (SDL_KEYDOWN, SDLK_RIGHT):
-            if self.state in (self.RIGHT_STAND, self.LEFT_STAND):
+            elif event.key == SDLK_RIGHT:
                 self.state = self.RIGHT_RUN
 
-        elif (event.type, event.key) == (SDL_KEYUP, SDLK_LEFT):
-            if self.state in (self.LEFT_RUN,):
+        elif event.type == SDL_KEYUP:
+            if event.key == SDLK_LEFT:
                 self.state = self.LEFT_STAND
-
-        elif (event.type, event.key) == (SDL_KEYUP, SDLK_RIGHT):
-            if self.state in (self.RIGHT_RUN,):
+            elif event.key == SDLK_RIGHT:
                 self.state = self.RIGHT_STAND
 
     def update(self):
@@ -133,6 +130,8 @@ class Character:
     # ***************************************
     def damage(self):
         self.life_cnt = self.life_cnt - 1
+        self.effect.draw(self.x, self.y)
+
 
     def getcollisionbox(self):
         return self.x - 15, self.y -30, self.x + 10, self.y + 25
@@ -229,7 +228,7 @@ def main():
     character   = Character()
     #***************************************
     # 스테이지 1 에서 장애물은 10개
-    # 클리어 시간은 30초
+    # 클리어 시간은 10초
     #***************************************
     obstacle    = [Obstacle() for i in range(10)]
     #########################################
@@ -257,6 +256,10 @@ def main():
         if(character.update() == False):
             stagefail()
 
+        # ***************************************
+        # 장애물이 케릭터와 충돌하면 make 함수를
+        # 호출해 다시 재생성 후 케릭터 생명력 1 감소
+        # ***************************************
         for stone in obstacle:
             if collide(character, stone) == False:
                 stone.make()
