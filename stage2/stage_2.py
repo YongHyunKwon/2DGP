@@ -59,20 +59,45 @@ class Obstacle:
         if(self.y > 500):
             self.make()
 
+    def getcollisionbox(self):
+        return self.x - 20, self.y - 15, self.x + 15, self.y + 20
+
     def draw(self):
         self.image.draw(self.x, self.y)
+
+    #########################################
+    # 충돌 박스 테스트 코드
+    ########################################
+    def drawcollision(self):
+        draw_rectangle(*self.getcollisionbox())
 
 #***************************************
 # Character
 # 캐릭터를 담당하는 클래스
 #***************************************
 class Character:
-    def __init__(self):
-        self.x, self.y  = 250, 200
-        self.speed      = 5
-        self.frame      = 0
-        self.image      = load_image('stage_2_cha.png')
 
+    # ***************************************
+    # 캐릭터의 방향 및 시트 값
+    # ***************************************
+    LEFT_RUN, RIGHT_RUN, LEFT_STAND, RIGHT_STAND = 5, 4, 1, 0
+
+    def __init__(self):
+        # ***************************************
+        # dirup:        현재 KEY_UP 상태인가 아닌가
+        # dir:          현재 KEY_LEFT, RIGHT 상태인가 아닌가
+        #
+        # False[안눌린 상태], True[눌린 상태]
+        # ***************************************
+        self.x, self.y  = 250, 200
+        self.x_speed    = 5
+        self.y_speed    = 3
+        self.frame      = random.randint(0, 7)
+        self.state      = self.RIGHT_STAND
+        self.dirup      = False
+        self.dir        = False
+        self.image      = load_image('stage_2_cha.png')
+        self.effect     = load_image('effect.png')
         # ***************************************
         # 최초 생명력은 3
         # ***************************************
@@ -82,29 +107,62 @@ class Character:
     def handle_event(self, event):
         # ***************************************
         # ->,<-,↑ 키 입력시 캐릭터 이동
-        # 스테이지 2 에서는 x 값을 5 씩 이동
         # ***************************************
         if event.type == SDL_KEYDOWN:
-            if event.key == SDLK_RIGHT:
-                self.x += self.speed
-            elif event.key == SDLK_LEFT:
-                self.x -= self.speed
+            if event.key == SDLK_LEFT:
+                self.state  = self.LEFT_RUN
+                self.dir    = True
+
+            elif event.key == SDLK_RIGHT:
+                self.state  = self.RIGHT_RUN
+                self.dir    = True
+
             elif event.key == SDLK_UP:
-                self.y += self.speed
+                if self.state in (self.LEFT_STAND,):
+                    self.state = self.LEFT_RUN
+                elif self.state in (self.RIGHT_STAND,):
+                    self.state = self.RIGHT_RUN
+                self.dirup = True
+
+
+        elif event.type == SDL_KEYUP:
+            if event.key == SDLK_LEFT:
+                self.state  = self.LEFT_STAND
+                self.dir    = False
+
+            elif event.key == SDLK_RIGHT:
+                self.state  = self.RIGHT_STAND
+                self.dir    = False
+
+            elif event.key == SDLK_UP:
+                if self.state in (self.LEFT_RUN,):
+                    self.state = self.LEFT_STAND
+                elif self.state in (self.RIGHT_RUN,):
+                    self.state = self.RIGHT_STAND
+                self.dirup = False
 
     def update(self):
         self.frame = (self.frame + 1) % 8
         # ***************************************
         # 화면을 벗어나지 않게 x, y 값을 조정
+        # 스테이지 2 에서는 x 값 5, y 값 3씩 이동
+        #
+        # dir == True
+        # 방향키[→,←] 가 눌렸을 때만 x 이동
         # ***************************************
-        if self.x > 500:
-            self.x = 500
-        elif self.x < 0:
-            self.x = 0
-        elif self.y > 400:
-            self.y = 400
-        elif self.y < -20:
-            self.y = -30
+        if self.dir == True:
+            if self.state == self.RIGHT_RUN:
+                self.x = min(500, self.x + self.x_speed)
+            elif self.state == self.LEFT_RUN:
+                self.x = max(0, self.x - self.x_speed)
+
+        # ***************************************
+        # dirup == True
+        # 방향키[↑] 가 눌렸을 때만 y 이동
+        # ***************************************
+        if self.dirup == True:
+            if self.y < 400:
+                self.y = max(-30, self.y + self.y_speed)
 
         #***************************************
         # 캐릭터는 밑으로 계속 하강
@@ -114,15 +172,31 @@ class Character:
         if (self.life_cnt <= 0):
             return False
 
-    def draw(self):
-        self.image.clip_draw(self.frame * 70, 0, 70, 70, self.x, self.y)
+    # ***************************************
+    # damage
+    # 장애물과 충돌시 생명력 1 감소
+    # ***************************************
+    def damage(self):
+        self.life_cnt   = self.life_cnt - 1
+        self.effect.draw(self.x, self.y)
 
+    def getcollisionbox(self):
+        return self.x - 15, self.y - 30, self.x + 10, self.y + 25
+
+    def draw(self):
+        self.image.clip_draw(self.frame * 70, self.state * 70, 70, 70, self.x, self.y)
         # ***************************************
         # life_cnt 에 맞게 생명력 이미지를 draw
         # ***************************************
         for i in range(0, self.life_cnt):
             image_range = 30 * (i + 1)
             self.life_image.draw(image_range, 375)
+
+    #########################################
+    # 충돌 박스 테스트 코드
+    #########################################
+    def drawcollision(self):
+        draw_rectangle(*self.getcollisionbox())
 
 def handle_events():
     global running
@@ -152,9 +226,6 @@ def lifetime():
     # ***************************************
     # 클리어 시간과 현재 시간과의 차이를 구함
     # ***************************************
-    #########################################
-    # 현재는 테스트용으로 시간을 5 초만 줌
-    #########################################
     life_time   = clear_time - time.time()
     str_time    = datetime.datetime.fromtimestamp(life_time).strftime('%S')
 
@@ -162,7 +233,7 @@ def lifetime():
     font.draw(240, 380, str_time)
 
     # ***************************************
-    # 스테이지 1 의 클리어시간을 버티면 게임 종료
+    # 스테이지 2 의 클리어시간을 버티면 게임 종료
     # ***************************************
     if(int(str_time) <= 0 ):
         clear_font = load_font('HMKMRHD.TTF', 50)
@@ -184,6 +255,15 @@ def stagefail():
     delay(3)
     running = False
 
+def collide(chr, obs):
+    left_chr, bottom_chr, right_chr, top_chr = chr.getcollisionbox()
+    left_obs, bottom_obs, right_obs, top_obs = obs.getcollisionbox()
+
+    if left_chr < right_obs and right_chr > left_obs and bottom_chr < top_obs and top_chr > bottom_obs:
+        return False
+
+    return True
+
 def main():
     open_canvas(500, 400)
 
@@ -196,9 +276,10 @@ def main():
     character   = Character()
     #***************************************
     # 스테이지 2 에서 장애물은 15개
+    # 클리어 시간은 20 초
     #***************************************
     obstacle    = [Obstacle() for i in range(15)]
-    clear_time  = time.time() + 5
+    clear_time  = time.time() + 20
     running     = True
 
     while running:
@@ -209,15 +290,26 @@ def main():
 
         back_ground.draw()
         character.draw()
+        character.drawcollision()
 
         for bubble in obstacle:
             bubble.draw()
+            bubble.drawcollision()
             bubble.update()
 
         lifetime()
 
         if (character.update() == False):
             stagefail()
+
+        # ***************************************
+        # 장애물이 케릭터와 충돌하면 make 함수를
+        # 호출해 다시 재생성 후 케릭터 생명력 1 감소
+        # ***************************************
+        for bubble in obstacle:
+            if collide(character, bubble) == False:
+                bubble.make()
+                character.damage()
 
         update_canvas()
 
