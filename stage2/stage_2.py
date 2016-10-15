@@ -181,7 +181,7 @@ class Character:
         self.effect.draw(self.x, self.y)
 
     def getcollisionbox(self):
-        return self.x - 15, self.y - 30, self.x + 10, self.y + 25
+        return self.x - 15, self.y - 25, self.x + 10, self.y + 30
 
     def draw(self):
         self.image.clip_draw(self.frame * 70, self.state * 70, 70, 70, self.x, self.y)
