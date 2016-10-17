@@ -258,6 +258,11 @@ class Character:
         # ***************************************
         self.x, self.y  = 250, 200
         self.speed      = 12
+        #########################################
+        # god [시연용 코드]
+        # 현재 캐릭터를 무적으로 만들어줌
+        #########################################
+        self.god        = False
         self.frame      = 0
         self.state      = self.RIGHT_STAND
         self.key        = self.K_NONE
@@ -340,8 +345,25 @@ class Character:
     # 장애물과 충돌시 생명력 1 감소
     # ***************************************
     def damage(self):
+        #########################################
+        # 시연용 코드
+        # god 이 True 면 캐릭터 생명력 변화 없음
+        #########################################
+        if (self.god == True):
+            return
+
         self.life_cnt = self.life_cnt - 1
         self.effect.draw(self.x, self.y)
+
+    #########################################
+    # 시연용 코드
+    # 현재 캐릭터를 무적으로 만들어줌
+    #########################################
+    def setgod(self):
+        if (self.god == False):
+            self.god = True
+        else:
+            self.god = False
 
     def getcollisionbox(self):
         return self.x - 10, self.y - 22, self.x + 13, self.y + 34
@@ -381,6 +403,8 @@ def handle_events():
             running = False
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
+            character.setgod()
         else:
             character.handle_event(event)
 
