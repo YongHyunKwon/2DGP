@@ -14,6 +14,7 @@ running     = None
 character   = None
 obstacle    = None
 clear_time  = None
+game_stop   = None
 
 #***************************************
 # Background
@@ -174,6 +175,8 @@ class Character:
 
 def handle_events():
     global running
+    global game_stop
+    global clear_time
     global character
 
     events = get_events()
@@ -183,10 +186,27 @@ def handle_events():
     for event in events:
         if event.type == SDL_QUIT:
             running = False
+
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
+
+        # ***************************************
+        # SPACE 누르면 일시정지 상태
+        # ***************************************
         elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
+            if (game_stop == True):
+                clear_time = clear_time - time.time()
+                game_stop = False
+            else:
+                clear_time = clear_time + time.time()
+                game_stop = True
+
+        # ***************************************
+        # a 누르면 캐릭터 무적 상태
+        # ***************************************
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_a:
             character.setgod()
+
         else:
             character.handle_event(event)
 
@@ -214,7 +234,7 @@ def lifetime():
         clear_font = load_font('HMKMRHD.TTF', 50)
         clear_font.draw(70, 200, 'Stage Clear')
         update_canvas()
-        delay(3)
+        delay(1)
         close_canvas()
         stage_2.main()
 
@@ -254,7 +274,7 @@ def startstage():
     clear_font.draw(125, 200, 'STAGE1')
 
     update_canvas()
-    delay(3)
+    delay(1)
 
 def main():
     open_canvas(500, 400)
@@ -262,6 +282,7 @@ def main():
     global running
     global character
     global obstacle
+    global game_stop
     global clear_time
 
     startstage()
@@ -274,40 +295,46 @@ def main():
     #***************************************
     obstacle    = [Obstacle() for i in range(10)]
     #########################################
-    # 현재는 테스트용으로 시간을 20 초만 줌
+    # 현재는 테스트용으로 시간을 10 초만 줌
     #########################################
-    clear_time  = time.time() + 20
+    clear_time  = time.time() + 10
+
+    game_stop = True
     running     = True
 
     while running:
         handle_events()
 
-        clear_canvas()
-
-        back_ground.draw()
-        character.draw()
-        character.drawcollision()
-
-        for stone in obstacle:
-            stone.draw()
-            stone.drawcollision()
-            stone.update()
-
-        lifetime()
-
-        if(character.update() == False):
-            stagefail()
-
         # ***************************************
-        # 장애물이 케릭터와 충돌하면 make 함수를
-        # 호출해 다시 재생성 후 케릭터 생명력 1 감소
+        # game_stop 이 True 라면 일시정지 상태
         # ***************************************
-        for stone in obstacle:
-            if collide(character, stone) == False:
-                stone.make()
-                character.damage()
+        if (game_stop == True):
+            clear_canvas()
 
-        update_canvas()
+            back_ground.draw()
+            character.draw()
+            character.drawcollision()
+
+            for stone in obstacle:
+                stone.draw()
+                stone.drawcollision()
+                stone.update()
+
+            lifetime()
+
+            if(character.update() == False):
+                stagefail()
+
+            # ***************************************
+            # 장애물이 케릭터와 충돌하면 make 함수를
+            # 호출해 다시 재생성 후 케릭터 생명력 1 감소
+            # ***************************************
+            for stone in obstacle:
+                if collide(character, stone) == False:
+                    stone.make()
+                    character.damage()
+
+            update_canvas()
 
         delay(0.05)
 

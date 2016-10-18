@@ -16,6 +16,7 @@ running     = None
 character   = None
 obstacle    = None
 clear_time  = None
+game_stop   = None
 
 #***************************************
 # Background
@@ -300,8 +301,6 @@ class Character:
                 elif event.key == SDLK_DOWN:
                     self.updown = 2
 
-
-
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_LEFT:
                 self.state  = self.LEFT_STAND
@@ -391,6 +390,8 @@ class Character:
 
 def handle_events():
     global running
+    global game_stop
+    global clear_time
     global character
 
     events = get_events()
@@ -401,10 +402,27 @@ def handle_events():
     for event in events:
         if event.type == SDL_QUIT:
             running = False
+
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
+
+        # ***************************************
+        # SPACE 누르면 일시정지 상태
+        # ***************************************
         elif event.type == SDL_KEYDOWN and event.key == SDLK_SPACE:
+            if(game_stop == True):
+                clear_time = clear_time - time.time()
+                game_stop = False
+            else:
+                clear_time = clear_time + time.time()
+                game_stop = True
+
+        # ***************************************
+        # a 누르면 캐릭터 무적 상태
+        # ***************************************
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_a:
             character.setgod()
+
         else:
             character.handle_event(event)
 
@@ -432,7 +450,7 @@ def lifetime():
         clear_font = load_font('HMKMRHD.TTF', 50)
         clear_font.draw(45, 200, 'STAGE CLEAR')
         update_canvas()
-        delay(3)
+        delay(1)
         running = False
 
 #***************************************
@@ -471,7 +489,7 @@ def startstage():
     clear_font.draw(125, 200, 'STAGE3')
 
     update_canvas()
-    delay(3)
+    delay(1)
 
 def main():
     open_canvas(500, 400)
@@ -479,6 +497,7 @@ def main():
     global running
     global character
     global obstacle
+    global game_stop
     global clear_time
 
     startstage()
@@ -492,52 +511,58 @@ def main():
     obstacle    = [Obstacle() for i in range(10)]
     guided_obs  = [GuidedObstacle() for i in range(2)]
     #########################################
-    # 현재는 테스트용으로 시간을 20 초만 줌
+    # 현재는 테스트용으로 시간을 15 초만 줌
     #########################################
-    clear_time  = time.time() + 20
+    clear_time  = time.time() + 15
 
+    game_stop   = True
     running     = True
 
     while running:
         handle_events()
-        character.update()
-
-        clear_canvas()
-
-        back_ground.draw()
-        character.draw()
-        character.drawcollision()
-
-        for meteor in obstacle:
-            meteor.draw()
-            meteor.drawcollision()
-            meteor.update()
-
-        for guided_meteor in guided_obs:
-            guided_meteor.draw()
-            guided_meteor.drawcollision()
-            guided_meteor.update(character.getposx(), character.getposy())
-
-        lifetime()
-
-        if (character.update() == False):
-            stagefail()
 
         # ***************************************
-        # 장애물이 케릭터와 충돌하면 make 함수를
-        # 호출해 다시 재생성 후 케릭터 생명력 1 감소
+        # game_stop 이 True 라면 일시정지 상태
         # ***************************************
-        for meteor in obstacle:
-            if collide(character, meteor) == False:
-                meteor.make()
-                character.damage()
+        if(game_stop == True):
+            character.update()
 
-        for guided_meteor in guided_obs:
-            if collide(character, guided_meteor) == False:
-                guided_meteor.make(character.getposx(), character.getposy())
-                character.damage()
+            clear_canvas()
 
-        update_canvas()
+            back_ground.draw()
+            character.draw()
+            character.drawcollision()
+
+            for meteor in obstacle:
+                meteor.draw()
+                meteor.drawcollision()
+                meteor.update()
+
+            for guided_meteor in guided_obs:
+                guided_meteor.draw()
+                guided_meteor.drawcollision()
+                guided_meteor.update(character.getposx(), character.getposy())
+
+            lifetime()
+
+            if (character.update() == False):
+                stagefail()
+
+            # ***************************************
+            # 장애물이 케릭터와 충돌하면 make 함수를
+            # 호출해 다시 재생성 후 케릭터 생명력 1 감소
+            # ***************************************
+            for meteor in obstacle:
+                if collide(character, meteor) == False:
+                    meteor.make()
+                    character.damage()
+
+            for guided_meteor in guided_obs:
+                if collide(character, guided_meteor) == False:
+                    guided_meteor.make(character.getposx(), character.getposy())
+                    character.damage()
+
+            update_canvas()
 
         delay(0.05)
 
