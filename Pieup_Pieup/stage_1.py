@@ -85,13 +85,13 @@ class Character:
     def __init__(self):
         # ***************************************
         # god:          무적
-        # god_time:     무적 시간 [기본 5초]
+        # god_time:     무적 시간 [기본 3초]
         # ***************************************
         self.x, self.y  = 250, 40
         self.speed      = 10
         self.god        = False
-        self.god_cnt    = 1
-        self.god_time   = time.time()  + 5
+        self.god_cnt    = 2
+        self.god_time   = 0
         self.frame      = random.randint(0, 7)
         self.state      = self.RIGHT_STAND
         self.image      = load_image('stage_1_cha.png')
@@ -177,11 +177,10 @@ class Character:
         self.effect.draw(self.x, self.y)
 
     def setgod(self):
-        if(self.god_cnt > 0):
+        if(self.god_cnt > 0 and self.god == False):
             self.god        = True
+            self.god_time   = time.time() + 3
             self.god_cnt    -= 1
-        else:
-            self.god        = False
 
     def getcollisionbox(self):
         return self.x - 15, self.y -30, self.x + 10, self.y + 25
