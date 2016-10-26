@@ -88,25 +88,27 @@ class Character:
         # dir:          현재 KEY_LEFT, RIGHT 상태인가 아닌가
         #
         # False[안눌린 상태], True[눌린 상태]
+        #
+        # god:          무적
+        # god_time:     무적 시간 [기본 3초]
         # ***************************************
         self.x, self.y  = 250, 200
         self.x_speed    = 5
         self.y_speed    = 3
-        #########################################
-        # god [시연용 코드]
-        # 현재 캐릭터를 무적으로 만들어줌
-        #########################################
-        self.god = False
+        self.god        = False
+        self.god_cnt    = 2
+        self.god_time   = 0
         self.frame      = random.randint(0, 7)
         self.state      = self.RIGHT_STAND
         self.dirup      = False
         self.dir        = False
         self.image      = load_image('stage_2_cha.png')
         self.effect     = load_image('effect.png')
+        self.god_image  = load_image('god.png')
         # ***************************************
         # 최초 생명력은 3
         # ***************************************
-        self.life_cnt = 3
+        self.life_cnt   = 3
         self.life_image = load_image('heart.png')
 
     def handle_event(self, event):
@@ -122,13 +124,15 @@ class Character:
                 self.state  = self.RIGHT_RUN
                 self.dir    = True
 
+            elif event.key == SDLK_a:
+                self.setgod()
+
             elif event.key == SDLK_UP:
                 if self.state in (self.LEFT_STAND,):
                     self.state = self.LEFT_RUN
                 elif self.state in (self.RIGHT_STAND,):
                     self.state = self.RIGHT_RUN
                 self.dirup = True
-
 
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_LEFT:
@@ -177,30 +181,44 @@ class Character:
         if (self.life_cnt <= 0):
             return False
 
+        self.godproc()
+
+    def godproc(self):
+       # ***************************************
+       # 무적 스킬을 사용했을 경우 시간 처리
+       # 시간이 0 이면 무적 스킬을 해제
+       # ***************************************
+       if self.god == True:
+           skill_time = self.god_time - time.time()
+
+           if (skill_time < 0):
+               self.god = False
+               return
+
+           str_time = datetime.datetime.fromtimestamp(skill_time).strftime('%S')
+
+           font = load_font('HMKMRHD.TTF', 20)
+           font.draw(15, 70, str_time)
+
     # ***************************************
     # damage
     # 장애물과 충돌시 생명력 1 감소
     # ***************************************
     def damage(self):
-        #########################################
-        # 시연용 코드
-        # god 이 True 면 캐릭터 생명력 변화 없음
-        #########################################
+        # ***************************************
+        # god True 면 캐릭터 생명력 변화 없음
+        # ***************************************
         if (self.god == True):
             return
 
         self.life_cnt   = self.life_cnt - 1
         self.effect.draw(self.x, self.y)
 
-    #########################################
-    # 시연용 코드
-    # 현재 캐릭터를 무적으로 만들어줌
-    #########################################
     def setgod(self):
-        if (self.god == False):
-            self.god = True
-        else:
-            self.god = False
+        if (self.god_cnt > 0 and self.god == False):
+            self.god        = True
+            self.god_time   = time.time() + 3
+            self.god_cnt    -= 1
 
     def getcollisionbox(self):
         return self.x - 15, self.y - 25, self.x + 10, self.y + 30
@@ -213,6 +231,12 @@ class Character:
         for i in range(0, self.life_cnt):
             image_range = 30 * (i + 1)
             self.life_image.draw(image_range, 375)
+
+        self.god_image.draw(30, 40)
+
+        god_font = load_font('HMKMRHD.TTF', 40)
+        god_str = str(self.god_cnt)
+        god_font.draw(15, 40, god_str)
 
     #########################################
     # 충돌 박스 테스트 코드
@@ -248,13 +272,6 @@ def handle_events():
             else:
                 clear_time = clear_time + time.time()
                 game_stop = True
-
-        # ***************************************
-        # a 누르면 캐릭터 무적 상태
-        # ***************************************
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_a:
-            character.setgod()
-
         else:
             character.handle_event(event)
 

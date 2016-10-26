@@ -112,11 +112,7 @@ class Character:
                 self.state = self.LEFT_RUN
             elif event.key == SDLK_RIGHT:
                 self.state = self.RIGHT_RUN
-
-            # ***************************************
-            # a 누르면 캐릭터 무적 상태
-            # ***************************************
-            elif event.type == SDL_KEYDOWN and event.key == SDLK_a:
+            elif event.key == SDLK_a:
                 self.setgod()
 
         elif event.type == SDL_KEYUP:
@@ -124,8 +120,6 @@ class Character:
                 self.state = self.LEFT_STAND
             elif event.key == SDLK_RIGHT:
                 self.state = self.RIGHT_STAND
-
-
 
 
     def update(self):
@@ -167,9 +161,9 @@ class Character:
     # 장애물과 충돌시 생명력 1 감소
     # ***************************************
     def damage(self):
-        #########################################
+        # ***************************************
         # god True 면 캐릭터 생명력 변화 없음
-        #########################################
+        # ***************************************
         if(self.god == True):
             return
 
@@ -199,7 +193,6 @@ class Character:
         god_font    = load_font('HMKMRHD.TTF', 40)
         god_str     = str(self.god_cnt)
         god_font.draw(15, 40, god_str)
-
 
     #########################################
     # 충돌 박스 테스트 코드
