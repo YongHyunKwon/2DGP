@@ -86,17 +86,21 @@ class Character:
         # ***************************************
         # god:          무적
         # god_time:     무적 시간 [기본 3초]
+        # ulti:         궁극기 [화면내 장애물 전부 제거]
         # ***************************************
         self.x, self.y  = 250, 40
         self.speed      = 10
         self.god        = False
         self.god_cnt    = 2
         self.god_time   = 0
+        self.ulti       = False
+        self.ulti_cnt   = 2
         self.frame      = random.randint(0, 7)
         self.state      = self.RIGHT_STAND
         self.image      = load_image('stage_1_cha.png')
         self.effect     = load_image('effect.png')
         self.god_image  = load_image('god.png')
+        self.ulti_image = load_image('ultimate.png')
         # ***************************************
         # 최초 생명력은 3
         # ***************************************
@@ -114,6 +118,8 @@ class Character:
                 self.state = self.RIGHT_RUN
             elif event.key == SDLK_a:
                 self.setgod()
+            elif event.key == SDLK_s:
+                self.setulti()
 
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_LEFT:
@@ -136,7 +142,13 @@ class Character:
         if(self.life_cnt <= 0):
             return False
 
+        self.ultiproc()
+
         self.godproc()
+
+    def ultiproc(self):
+        if (self.ulti == True):
+            self.ulti = False
 
     def godproc(self):
         # ***************************************
@@ -176,6 +188,14 @@ class Character:
             self.god_time   = time.time() + 3
             self.god_cnt    -= 1
 
+    def setulti(self):
+        if (self.ulti_cnt > 0 and self.ulti == False):
+            self.ulti       = True
+            self.ulti_cnt   -= 1
+
+    def getulti(self):
+        return self.ulti
+
     def getcollisionbox(self):
         return self.x - 15, self.y -30, self.x + 10, self.y + 25
 
@@ -188,8 +208,12 @@ class Character:
             image_range = 30 * (i + 1)
             self.life_image.draw(image_range,375)
 
-        self.god_image.draw(30, 40)
+        self.ulti_image.draw(470, 40)
+        ulti_font = load_font('HMKMRHD.TTF', 40)
+        ulti_str = str(self.ulti_cnt)
+        ulti_font.draw(455, 40, ulti_str)
 
+        self.god_image.draw(30, 40)
         god_font    = load_font('HMKMRHD.TTF', 40)
         god_str     = str(self.god_cnt)
         god_font.draw(15, 40, god_str)
@@ -341,6 +365,13 @@ def main():
                 stone.update()
 
             lifetime()
+
+            # ***************************************
+            # 궁극기가 눌렸다면 장애물들 초기화 함수 호출
+            # ***************************************
+            if(character.getulti() == True):
+                for stone in obstacle:
+                    stone.make()
 
             if(character.update() == False):
                 stagefail()
