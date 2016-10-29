@@ -259,12 +259,15 @@ class Character:
         #
         # god:          무적
         # god_time:     무적 시간 [기본 3초]
+        # ulti:         궁극기 [화면내 장애물 전부 제거]
         # ***************************************
         self.x, self.y  = 250, 200
-        self.speed      = 12
+        self.speed      = 15
         self.god        = False
         self.god_cnt    = 2
         self.god_time   = 0
+        self.ulti       = False
+        self.ulti_cnt   = 2
         self.frame      = 0
         self.state      = self.RIGHT_STAND
         self.key        = self.K_NONE
@@ -273,6 +276,7 @@ class Character:
         self.image      = load_image('stage_3_cha.png')
         self.effect     = load_image('effect.png')
         self.god_image  = load_image('god.png')
+        self.ulti_image = load_image('ultimate.png')
         # ***************************************
         # 최초 생명력은 3
         # ***************************************
@@ -294,6 +298,8 @@ class Character:
 
             elif event.key == SDLK_a:
                 self.setgod()
+            elif event.key == SDLK_s:
+                self.setulti()
 
             elif event.key == SDLK_UP or event.key == SDLK_DOWN:
                 if self.state in (self.LEFT_STAND,):
@@ -344,7 +350,13 @@ class Character:
         if (self.life_cnt <= 0):
             return False
 
+        self.ultiproc()
+
         self.godproc()
+
+    def ultiproc(self):
+        if (self.ulti == True):
+            self.ulti = False
 
     def godproc(self):
        # ***************************************
@@ -383,6 +395,11 @@ class Character:
             self.god_time   = time.time() + 3
             self.god_cnt    -= 1
 
+    def setulti(self):
+        if (self.ulti_cnt > 0 and self.ulti == False):
+            self.ulti       = True
+            self.ulti_cnt   -= 1
+
     def getcollisionbox(self):
         return self.x - 10, self.y - 22, self.x + 13, self.y + 34
 
@@ -391,6 +408,9 @@ class Character:
 
     def getposy(self):
         return self.y
+
+    def getulti(self):
+        return self.ulti
 
     def draw(self):
         self.image.clip_draw(self.frame * 70, self.state * 70, 70, 70, self.x, self.y)
@@ -401,10 +421,14 @@ class Character:
             image_range = 30 * (i + 1)
             self.life_image.draw(image_range, 375)
 
-        self.god_image.draw(30, 40)
+        self.ulti_image.draw(470, 40)
+        ulti_font   = load_font('HMKMRHD.TTF', 40)
+        ulti_str    = str(self.ulti_cnt)
+        ulti_font.draw(455, 40, ulti_str)
 
-        god_font = load_font('HMKMRHD.TTF', 40)
-        god_str = str(self.god_cnt)
+        self.god_image.draw(30, 40)
+        god_font    = load_font('HMKMRHD.TTF', 40)
+        god_str     = str(self.god_cnt)
         god_font.draw(15, 40, god_str)
 
     #########################################
@@ -540,11 +564,9 @@ def main():
         handle_events()
 
         # ***************************************
-        # game_stop 이 True 라면 일시정지 상태
+        # game_stop 이 True 라면 플레이 상태
         # ***************************************
         if(game_stop == True):
-            character.update()
-
             clear_canvas()
 
             back_ground.draw()
@@ -562,6 +584,15 @@ def main():
                 guided_meteor.update(character.getposx(), character.getposy())
 
             lifetime()
+
+            # ***************************************
+            # 궁극기가 눌렸다면 장애물들 초기화 함수 호출
+            # ***************************************
+            if (character.getulti() == True):
+                for meteor in obstacle:
+                    meteor.make()
+                for guided_meteor in guided_obs:
+                    guided_meteor.make(character.getposx(), character.getposy())
 
             if (character.update() == False):
                 stagefail()

@@ -350,7 +350,7 @@ def main():
         handle_events()
 
         # ***************************************
-        # game_stop 이 True 라면 일시정지 상태
+        # game_stop 이 True 라면 플레이 상태
         # ***************************************
         if (game_stop == True):
             clear_canvas()
