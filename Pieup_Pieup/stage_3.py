@@ -38,14 +38,21 @@ class Obstacle:
     # 장애물 시작 방향 값
     #***************************************
     LEFT_START, RIGHT_START, UP_START, DOWN_START = 0, 1, 2, 3
+    # ***************************************
+    # 장애물 타입 값
+    # ***************************************
+    NONE, HEART = 0, 1
 
-    image = None
-
+    image       = None
     def __init__(self):
+        self.obj  = self.NONE
         self.make()
 
         if Obstacle.image == None:
             Obstacle.image = load_image('stage_3_meteor.png')
+
+        self.heart_image = load_image('heart.png')
+
 
     #***************************************
     # make
@@ -53,6 +60,7 @@ class Obstacle:
     # x, y 값은 정해진 위치에 따라 생성, 속도 7~12
     #***************************************
     def make(self):
+        self.randobj()
         self.select_pos = random.randint(0, 3)
 
         if(self.select_pos == self.LEFT_START):
@@ -70,6 +78,25 @@ class Obstacle:
         # x: ↑[0],↓[1] // y: →[0],←[1]
         #***************************************
         self.dir        = random.randint(0, 1)
+
+    # ***************************************
+    # randobj
+    # 장애물의 타입을 결정
+    # ***************************************
+    def randobj(self):
+        rand_val = random.randint(0, 100)
+
+        # ***************************************
+        # 0~100 사의 난수값을 가지고 장애물의 타입을 결정
+        # 10% 확률로 생명력 충전
+        # ***************************************
+        if(rand_val < 10):
+            self.obj = self.HEART
+        else:
+            self.obj = self.NONE
+
+    def getobjtype(self):
+        return self.obj
 
     #***************************************
     # setpos
@@ -111,7 +138,10 @@ class Obstacle:
         return self.x - 20, self.y - 8, self.x + 5, self.y + 18
 
     def draw(self):
-        self.image.draw(self.x, self.y)
+        if(self.obj == self.HEART):
+            self.heart_image.draw(self.x, self.y)
+        else:
+            self.image.draw(self.x, self.y)
 
     #########################################
     # 충돌 박스 테스트 코드
@@ -248,6 +278,10 @@ class Character:
     # 키보드가 눌린 값
     # ***************************************
     K_NONE, K_LEFT_RIGHT, K_UP, K_DOWN = 0, 1, 2, 3
+    # ***************************************
+    # 장애물 타입 값
+    # ***************************************
+    NONE, HEART = 0, 1
 
     def __init__(self):
         # ***************************************
@@ -379,11 +413,21 @@ class Character:
     # damage
     # 장애물과 충돌시 생명력 1 감소
     # ***************************************
-    def damage(self):
+    def damage(self, obj):
         # ***************************************
         # god True 면 캐릭터 생명력 변화 없음
         # ***************************************
-        if (self.god == True):
+        if(obj == self.NONE):
+            if (self.god == True):
+                return
+
+        # ***************************************
+        # 장애물이 생명력 충전일 경우 생명력 + 1
+        # 최대 5개의 값을 넘지 아니함
+        # ***************************************
+        if(obj == self.HEART):
+            self.life_cnt =  self.life_cnt + 1
+            self.life_cnt = min(5, self.life_cnt)
             return
 
         self.life_cnt = self.life_cnt - 1
@@ -603,13 +647,13 @@ def main():
             # ***************************************
             for meteor in obstacle:
                 if collide(character, meteor) == False:
+                    character.damage(meteor.getobjtype())
                     meteor.make()
-                    character.damage()
 
             for guided_meteor in guided_obs:
                 if collide(character, guided_meteor) == False:
+                    character.damage(0)
                     guided_meteor.make(character.getposx(), character.getposy())
-                    character.damage()
 
             update_canvas()
 
