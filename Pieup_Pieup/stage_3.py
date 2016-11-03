@@ -44,14 +44,16 @@ class Obstacle:
     NONE, HEART = 0, 1
 
     image       = None
+    heart_image = None
+
     def __init__(self):
         self.obj  = self.NONE
         self.make()
 
         if Obstacle.image == None:
             Obstacle.image = load_image('stage_3_meteor.png')
-
-        self.heart_image = load_image('heart.png')
+        if Obstacle.heart_image == None:
+            Obstacle.heart_image = load_image('heart.png')
 
 
     #***************************************
@@ -135,7 +137,10 @@ class Obstacle:
             self.make()
 
     def getcollisionbox(self):
-        return self.x - 20, self.y - 8, self.x + 5, self.y + 18
+        if (self.obj == self.HEART):
+            return self.x - 20, self.y - 10, self.x + 8, self.y + 20
+        else:
+            return self.x - 20, self.y - 8, self.x + 5, self.y + 18
 
     def draw(self):
         if(self.obj == self.HEART):
@@ -411,7 +416,7 @@ class Character:
 
     # ***************************************
     # damage
-    # 장애물과 충돌시 생명력 1 감소
+    # 장애물과 충돌시 장애물 타입에 따라 처리
     # ***************************************
     def damage(self, obj):
         # ***************************************
