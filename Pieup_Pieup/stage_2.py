@@ -32,13 +32,21 @@ class Background:
 # 게임내 장애물을 담당하는 클래스
 #***************************************
 class Obstacle:
-    image = None
+    # ***************************************
+    # 장애물 타입 값
+    # ***************************************
+    NONE, HEART = 0, 1
+
+    image       = None
+    heart_image = None
 
     def __init__(self):
         self.make()
 
         if Obstacle.image == None:
             Obstacle.image = load_image('stage_2_bubble.png')
+        if Obstacle.heart_image == None:
+            Obstacle.heart_image = load_image('heart.png')
 
     #***************************************
     # make
@@ -46,8 +54,27 @@ class Obstacle:
     # x: 20~480, y: -20, 속도: 7~12
     #***************************************
     def make(self):
+        self.randobj()
         self.x, self.y  = random.randint(20, 480), -20
         self.speed      = random.randint(7, 12)
+
+    # ***************************************
+    # randobj
+    # 장애물의 타입을 결정
+    # ***************************************
+    def randobj(self):
+        rand_val = random.randint(0, 100)
+        # ***************************************
+        # 0~100 사의 난수값을 가지고 장애물의 타입을 결정
+        # 10% 확률로 생명력 충전
+        # ***************************************
+        if (rand_val < 10):
+            self.obj = self.HEART
+        else:
+            self.obj = self.NONE
+
+    def getobjtype(self):
+        return self.obj
 
     def update(self):
         #***************************************
@@ -60,10 +87,16 @@ class Obstacle:
             self.make()
 
     def getcollisionbox(self):
-        return self.x - 20, self.y - 15, self.x + 15, self.y + 20
+        if (self.obj == self.HEART):
+            return self.x - 20, self.y - 10, self.x + 8, self.y + 20
+        else:
+            return self.x - 20, self.y - 15, self.x + 15, self.y + 20
 
     def draw(self):
-        self.image.draw(self.x, self.y)
+        if (self.obj == self.HEART):
+            self.heart_image.draw(self.x, self.y)
+        else:
+            self.image.draw(self.x, self.y)
 
     #########################################
     # 충돌 박스 테스트 코드
@@ -81,6 +114,10 @@ class Character:
     # 캐릭터의 방향 및 시트 값
     # ***************************************
     LEFT_RUN, RIGHT_RUN, LEFT_STAND, RIGHT_STAND = 5, 4, 1, 0
+    # ***************************************
+    # 장애물 타입 값
+    # ***************************************
+    NONE, HEART = 0, 1
 
     def __init__(self):
         # ***************************************
@@ -216,11 +253,20 @@ class Character:
     # damage
     # 장애물과 충돌시 생명력 1 감소
     # ***************************************
-    def damage(self):
+    def damage(self, obj):
         # ***************************************
         # god True 면 캐릭터 생명력 변화 없음
         # ***************************************
         if (self.god == True):
+            return
+
+        # ***************************************
+        # 장애물이 생명력 충전일 경우 생명력 + 1
+        # 최대 5개의 값을 넘지 아니함
+        # ***************************************
+        if (obj == self.HEART):
+            self.life_cnt = self.life_cnt + 1
+            self.life_cnt = min(5, self.life_cnt)
             return
 
         self.life_cnt   = self.life_cnt - 1
@@ -427,8 +473,8 @@ def main():
             # ***************************************
             for bubble in obstacle:
                 if collide(character, bubble) == False:
+                    character.damage(bubble.getobjtype())
                     bubble.make()
-                    character.damage()
 
             update_canvas()
 
