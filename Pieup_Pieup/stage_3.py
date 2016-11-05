@@ -41,11 +41,12 @@ class Obstacle:
     # ***************************************
     # 장애물 타입 값
     # ***************************************
-    NONE, HEART, SPEED_UP = 0, 1, 2
+    NONE, HEART, SPEED_UP, TIME_SUB = 0, 1, 2, 3
 
     image           = None
     heart_image     = None
     speed_up_image  = None
+    time_sub_image  = None
 
     def __init__(self):
         self.obj  = self.NONE
@@ -57,6 +58,8 @@ class Obstacle:
             Obstacle.heart_image        = load_image('heart.png')
         if Obstacle.speed_up_image == None:
             Obstacle.speed_up_image     = load_image('speed_up.png')
+        if Obstacle.time_sub_image == None:
+            Obstacle.time_sub_image     = load_image('time_sub.png')
 
     #***************************************
     # make
@@ -92,12 +95,13 @@ class Obstacle:
 
         # ***************************************
         # 0~100 사의 난수값을 가지고 장애물의 타입을 결정
-        # 10% 확률로 생명력 충전
         # ***************************************
         if(rand_val < 10):
             self.obj = self.HEART
         elif (rand_val < 20):
             self.obj = self.SPEED_UP
+        elif (rand_val < 30):
+            self.obj = self.TIME_SUB
         else:
             self.obj = self.NONE
 
@@ -145,6 +149,8 @@ class Obstacle:
             return self.x - 20, self.y - 10, self.x + 8, self.y + 20
         elif (self.obj == self.SPEED_UP):
             return self.x - 23, self.y - 5, self.x + 8, self.y + 25
+        elif (self.obj == self.TIME_SUB):
+            return self.x - 20, self.y - 10, self.x + 16, self.y + 13
         else:
             return self.x - 20, self.y - 8, self.x + 5, self.y + 18
 
@@ -153,6 +159,8 @@ class Obstacle:
             self.heart_image.draw(self.x, self.y)
         elif (self.obj == self.SPEED_UP):
             self.speed_up_image.draw(self.x, self.y)
+        elif (self.obj == self.TIME_SUB):
+            self.time_sub_image.draw(self.x, self.y)
         else:
             self.image.draw(self.x, self.y)
 
@@ -294,7 +302,7 @@ class Character:
     # ***************************************
     # 장애물 타입 값
     # ***************************************
-    NONE, HEART, SPEED_UP = 0, 1, 2
+    NONE, HEART, SPEED_UP, TIME_SUB = 0, 1, 2, 3
 
     def __init__(self):
         # ***************************************
@@ -309,6 +317,7 @@ class Character:
         # ulti:             궁극기 [화면내 장애물 전부 제거]
         # speed_up:         이동속도 증가
         # speed_up_time:    이동속도 증가 시간 [기본 3초]
+        # time_sub:         시간 감소
         # ***************************************
         self.x, self.y      = 250, 200
         self.speed          = 15
@@ -319,6 +328,7 @@ class Character:
         self.ulti_cnt       = 2
         self.speed_up       = False
         self.speed_up_time  = 0
+        self.time_sub       = False
         self.frame          = 0
         self.state          = self.RIGHT_STAND
         self.key            = self.K_NONE
@@ -406,7 +416,7 @@ class Character:
         self.godproc()
 
         self.speedupproc()
-        print(self.speed)
+
     def ultiproc(self):
         if (self.ulti == True):
             self.ulti = False
@@ -463,10 +473,13 @@ class Character:
                 self.speed_up_time  = time.time() + 3
                 self.speed          += 5
 
+        elif (obj == self.TIME_SUB):
+            self.time_sub = True
+
         # ***************************************
         # god True 면 캐릭터 생명력 변화 없음
         # ***************************************
-        if(obj == self.NONE):
+        else:
             if (self.god == True):
                 return
 
@@ -484,6 +497,9 @@ class Character:
             self.ulti       = True
             self.ulti_cnt   -= 1
 
+    def settimesub(self):
+        self.time_sub = False
+
     def getcollisionbox(self):
         return self.x - 10, self.y - 22, self.x + 13, self.y + 34
 
@@ -495,6 +511,9 @@ class Character:
 
     def getulti(self):
         return self.ulti
+
+    def gettimesub(self):
+        return self.time_sub
 
     def draw(self):
         self.image.clip_draw(self.frame * 70, self.state * 70, 70, 70, self.x, self.y)
@@ -560,10 +579,16 @@ def handle_events():
 def lifetime():
     global running
     global clear_time
+    global character
+
+    if character.gettimesub() == True:
+        clear_time -= 3
+        character.settimesub()
+
     # ***************************************
     # 클리어 시간과 현재 시간과의 차이를 구함
     # ***************************************
-    life_time   = clear_time - time.time()
+    life_time   = max(0, clear_time - time.time())
     str_time    = datetime.datetime.fromtimestamp(life_time).strftime('%S')
 
     font        = load_font('HMKMRHD.TTF', 20)
@@ -572,7 +597,7 @@ def lifetime():
     # ***************************************
     # 스테이지 3 의 클리어시간을 버티면 게임 종료
     # ***************************************
-    if(int(str_time) <= 0 ):
+    if(life_time <= 0 ):
         clear_font = load_font('HMKMRHD.TTF', 50)
         clear_font.draw(45, 200, 'STAGE CLEAR')
         update_canvas()
