@@ -41,20 +41,22 @@ class Obstacle:
     # ***************************************
     # 장애물 타입 값
     # ***************************************
-    NONE, HEART = 0, 1
+    NONE, HEART, SPEED_UP = 0, 1, 2
 
-    image       = None
-    heart_image = None
+    image           = None
+    heart_image     = None
+    speed_up_image  = None
 
     def __init__(self):
         self.obj  = self.NONE
         self.make()
 
         if Obstacle.image == None:
-            Obstacle.image = load_image('stage_3_meteor.png')
+            Obstacle.image              = load_image('stage_3_meteor.png')
         if Obstacle.heart_image == None:
-            Obstacle.heart_image = load_image('heart.png')
-
+            Obstacle.heart_image        = load_image('heart.png')
+        if Obstacle.speed_up_image == None:
+            Obstacle.speed_up_image     = load_image('speed_up.png')
 
     #***************************************
     # make
@@ -94,6 +96,8 @@ class Obstacle:
         # ***************************************
         if(rand_val < 10):
             self.obj = self.HEART
+        elif (rand_val < 20):
+            self.obj = self.SPEED_UP
         else:
             self.obj = self.NONE
 
@@ -139,12 +143,16 @@ class Obstacle:
     def getcollisionbox(self):
         if (self.obj == self.HEART):
             return self.x - 20, self.y - 10, self.x + 8, self.y + 20
+        elif (self.obj == self.SPEED_UP):
+            return self.x - 23, self.y - 5, self.x + 8, self.y + 25
         else:
             return self.x - 20, self.y - 8, self.x + 5, self.y + 18
 
     def draw(self):
         if(self.obj == self.HEART):
             self.heart_image.draw(self.x, self.y)
+        elif (self.obj == self.SPEED_UP):
+            self.speed_up_image.draw(self.x, self.y)
         else:
             self.image.draw(self.x, self.y)
 
@@ -286,41 +294,45 @@ class Character:
     # ***************************************
     # 장애물 타입 값
     # ***************************************
-    NONE, HEART = 0, 1
+    NONE, HEART, SPEED_UP = 0, 1, 2
 
     def __init__(self):
         # ***************************************
-        # dirupdown:    현재 KEY_UP,DOWN 상태인가 아닌가
-        # dir:          현재 KEY_LEFT, RIGHT 상태인가 아닌가
+        # dirupdown:        현재 KEY_UP,DOWN 상태인가 아닌가
+        # dir:              현재 KEY_LEFT, RIGHT 상태인가 아닌가
         #
         # 0[안눌린 상태], 1[UP 상태], 2[DWON 상태]
         # False[안눌린 상태], True[눌린 상태]
         #
-        # god:          무적
-        # god_time:     무적 시간 [기본 3초]
-        # ulti:         궁극기 [화면내 장애물 전부 제거]
+        # god:              무적
+        # god_time:         무적 시간 [기본 3초]
+        # ulti:             궁극기 [화면내 장애물 전부 제거]
+        # speed_up:         이동속도 증가
+        # speed_up_time:    이동속도 증가 시간 [기본 3초]
         # ***************************************
-        self.x, self.y  = 250, 200
-        self.speed      = 15
-        self.god        = False
-        self.god_cnt    = 2
-        self.god_time   = 0
-        self.ulti       = False
-        self.ulti_cnt   = 2
-        self.frame      = 0
-        self.state      = self.RIGHT_STAND
-        self.key        = self.K_NONE
-        self.updown     = 0
-        self.dir        = False
-        self.image      = load_image('stage_3_cha.png')
-        self.effect     = load_image('effect.png')
-        self.god_image  = load_image('god.png')
-        self.ulti_image = load_image('ultimate.png')
+        self.x, self.y      = 250, 200
+        self.speed          = 15
+        self.god            = False
+        self.god_cnt        = 2
+        self.god_time       = 0
+        self.ulti           = False
+        self.ulti_cnt       = 2
+        self.speed_up       = False
+        self.speed_up_time  = 0
+        self.frame          = 0
+        self.state          = self.RIGHT_STAND
+        self.key            = self.K_NONE
+        self.updown         = 0
+        self.dir            = False
+        self.image          = load_image('stage_3_cha.png')
+        self.effect         = load_image('effect.png')
+        self.god_image      = load_image('god.png')
+        self.ulti_image     = load_image('ultimate.png')
         # ***************************************
         # 최초 생명력은 3
         # ***************************************
-        self.life_cnt   = 3
-        self.life_image = load_image('heart.png')
+        self.life_cnt       = 3
+        self.life_image     = load_image('heart.png')
 
     def handle_event(self, event):
         # ***************************************
@@ -354,11 +366,11 @@ class Character:
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_LEFT:
                 self.state  = self.LEFT_STAND
-                self.dir = False
+                self.dir    = False
 
             elif event.key == SDLK_RIGHT:
                 self.state  = self.RIGHT_STAND
-                self.dir = False
+                self.dir    = False
 
             elif event.key == SDLK_UP or event.key == SDLK_DOWN:
                 if self.state in (self.LEFT_STAND,):
@@ -393,6 +405,8 @@ class Character:
 
         self.godproc()
 
+        self.speedupproc()
+        print(self.speed)
     def ultiproc(self):
         if (self.ulti == True):
             self.ulti = False
@@ -414,18 +428,22 @@ class Character:
            font = load_font('HMKMRHD.TTF', 20)
            font.draw(15, 70, str_time)
 
+    def speedupproc(self):
+        if (self.speed_up == True):
+            skill_time = self.speed_up_time - time.time()
+
+            # ***************************************
+            # speed_up 시간이 끝나면 속도 복귀
+            # ***************************************
+            if (skill_time < 0):
+                self.speed_up   = False
+                self.speed      -= 5
+
     # ***************************************
     # damage
     # 장애물과 충돌시 장애물 타입에 따라 처리
     # ***************************************
     def damage(self, obj):
-        # ***************************************
-        # god True 면 캐릭터 생명력 변화 없음
-        # ***************************************
-        if(obj == self.NONE):
-            if (self.god == True):
-                return
-
         # ***************************************
         # 장애물이 생명력 충전일 경우 생명력 + 1
         # 최대 5개의 값을 넘지 아니함
@@ -435,8 +453,25 @@ class Character:
             self.life_cnt = min(5, self.life_cnt)
             return
 
-        self.life_cnt = self.life_cnt - 1
-        self.effect.draw(self.x, self.y)
+        elif (obj == self.SPEED_UP):
+            # ***************************************
+            # speed_up 아이템은 먹었을 때 한번만 발동
+            # 연속 발동이 되지 않도록 flag 값으로 체크
+            # ***************************************
+            if (self.speed_up == False):
+                self.speed_up       = True
+                self.speed_up_time  = time.time() + 3
+                self.speed          += 5
+
+        # ***************************************
+        # god True 면 캐릭터 생명력 변화 없음
+        # ***************************************
+        if(obj == self.NONE):
+            if (self.god == True):
+                return
+
+            self.life_cnt = self.life_cnt - 1
+            self.effect.draw(self.x, self.y)
 
     def setgod(self):
         if (self.god_cnt > 0 and self.god == False):
