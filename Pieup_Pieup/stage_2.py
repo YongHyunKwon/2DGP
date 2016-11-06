@@ -35,24 +35,27 @@ class Obstacle:
     # ***************************************
     # 장애물 타입 값
     # ***************************************
-    NONE, HEART, SPEED_UP, TIME_SUB = 0, 1, 2, 3
+    NONE, HEART, SPEED_UP, TIME_SUB, MOVE_STOP = 0, 1, 2, 3, 4
 
     image           = None
     heart_image     = None
     speed_up_image  = None
     time_sub_image  = None
+    move_stop_image = None
 
     def __init__(self):
         self.make()
 
         if Obstacle.image == None:
-            Obstacle.image          = load_image('stage_2_bubble.png')
+            Obstacle.image              = load_image('stage_2_bubble.png')
         if Obstacle.heart_image == None:
-            Obstacle.heart_image    = load_image('heart.png')
+            Obstacle.heart_image        = load_image('heart.png')
         if Obstacle.speed_up_image == None:
-            Obstacle.speed_up_image = load_image('speed_up.png')
+            Obstacle.speed_up_image     = load_image('speed_up.png')
         if Obstacle.time_sub_image == None:
-            Obstacle.time_sub_image = load_image('time_sub.png')
+            Obstacle.time_sub_image     = load_image('time_sub.png')
+        if Obstacle.move_stop_image == None:
+            Obstacle.move_stop_image    = load_image('move_stop.png')
 
     #***************************************
     # make
@@ -80,6 +83,8 @@ class Obstacle:
             self.obj = self.SPEED_UP
         elif (rand_val < 30):
             self.obj = self.TIME_SUB
+        elif (rand_val < 40):
+            self.obj = self.MOVE_STOP
         else:
             self.obj = self.NONE
 
@@ -103,6 +108,8 @@ class Obstacle:
             return self.x - 23, self.y - 5, self.x + 8, self.y + 25
         elif (self.obj == self.TIME_SUB):
             return self.x - 20, self.y - 10, self.x + 16, self.y + 13
+        elif (self.obj == self.MOVE_STOP):
+            return self.x - 19, self.y - 17, self.x + 16, self.y + 17
         else:
             return self.x - 20, self.y - 15, self.x + 15, self.y + 20
 
@@ -113,6 +120,8 @@ class Obstacle:
             self.speed_up_image.draw(self.x, self.y)
         elif (self.obj == self.TIME_SUB):
             self.time_sub_image.draw(self.x, self.y)
+        elif (self.obj == self.MOVE_STOP):
+            self.move_stop_image.draw(self.x, self.y)
         else:
             self.image.draw(self.x, self.y)
 
@@ -135,7 +144,7 @@ class Character:
     # ***************************************
     # 장애물 타입 값
     # ***************************************
-    NONE, HEART, SPEED_UP, TIME_SUB = 0, 1, 2, 3
+    NONE, HEART, SPEED_UP, TIME_SUB, MOVE_STOP = 0, 1, 2, 3, 4
 
     def __init__(self):
         # ***************************************
@@ -150,10 +159,14 @@ class Character:
         # speed_up:         이동속도 증가
         # speed_up_time:    이동속도 증가 시간 [기본 3초]
         # time_sub:         시간 감소
+        # move_stop:        이동 금지
+        # move_stop_time:   이동 금지 시간[기본 3초]
         # ***************************************
         self.x, self.y      = 250, 200
         self.x_speed        = 8
         self.y_speed        = 3
+        self.cur_x_speed    = 8
+        self.cur_y_speed    = 3
         self.god            = False
         self.god_cnt        = 2
         self.god_time       = 0
@@ -162,6 +175,8 @@ class Character:
         self.speed_up       = False
         self.speed_up_time  = 0
         self.time_sub       = False
+        self.move_stop      = False
+        self.move_stop_time = 0
         self.frame          = random.randint(0, 7)
         self.state          = self.RIGHT_STAND
         self.dirup          = False
@@ -254,6 +269,8 @@ class Character:
 
         self.speedupproc()
 
+        self.movestopproc()
+
     def ultiproc(self):
         if (self.ulti == True):
             self.ulti = False
@@ -287,6 +304,18 @@ class Character:
                 self.x_speed    -= 5
                 self.y_speed    -= 3
 
+    def movestopproc(self):
+        if (self.move_stop == True):
+            skill_time = self.move_stop_time - time.time()
+
+            # ***************************************
+            # move_stop 시간이 끝나면 속도 복귀
+            # ***************************************
+            if (skill_time < 0):
+                self.move_stop    = False
+                self.x_speed      = self.cur_x_speed
+                self.y_speed      = self.cur_y_speed
+
     # ***************************************
     # damage
     # 장애물과 충돌시 장애물 타입에 따라 처리
@@ -304,9 +333,10 @@ class Character:
         elif(obj == self.SPEED_UP):
             # ***************************************
             # speed_up 아이템은 먹었을 때 한번만 발동
+            # 단 이동 금지가 활성화된 상태라면 발동 안됨
             # 연속 발동이 되지 않도록 flag 값으로 체크
             # ***************************************
-            if(self.speed_up == False):
+            if(self.speed_up == False and self.move_stop == False):
                 self.speed_up       = True
                 self.speed_up_time  = time.time() + 3
                 self.x_speed        += 5
@@ -314,6 +344,17 @@ class Character:
 
         elif (obj == self.TIME_SUB):
             self.time_sub = True
+
+        elif (obj == self.MOVE_STOP):
+            # ***************************************
+            # move_stop 아이템은 먹었을 때 한번만 발동
+            # 연속 발동이 되지 않도록 flag 값으로 체크
+            # ***************************************
+            if (self.move_stop == False):
+                self.move_stop        = True
+                self.move_stop_time   = time.time() + 3
+                self.x_speed          = 0
+                self.y_speed          = 0
 
         else:
             # ***************************************
