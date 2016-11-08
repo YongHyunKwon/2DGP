@@ -41,13 +41,15 @@ class Obstacle:
     # ***************************************
     # 장애물 타입 값
     # ***************************************
-    NONE, HEART, SPEED_UP, TIME_SUB, MOVE_STOP = 0, 1, 2, 3, 4
+    NONE, HEART, SPEED_UP, TIME_SUB, MOVE_STOP  = 0, 1, 2, 3, 4
+    TIME_ADD                                    = 5
 
     image           = None
     heart_image     = None
     speed_up_image  = None
     time_sub_image  = None
     move_stop_image = None
+    time_add_image  = None
 
     def __init__(self):
         self.obj  = self.NONE
@@ -63,6 +65,8 @@ class Obstacle:
             Obstacle.time_sub_image     = load_image('time_sub.png')
         if Obstacle.move_stop_image == None:
             Obstacle.move_stop_image    = load_image('move_stop.png')
+        if Obstacle.time_add_image == None:
+            Obstacle.time_add_image     = load_image('time_add.png')
 
     #***************************************
     # make
@@ -99,14 +103,16 @@ class Obstacle:
         # ***************************************
         # 0~100 사의 난수값을 가지고 장애물의 타입을 결정
         # ***************************************
-        if(rand_val < 10):
+        if (rand_val < 5):
             self.obj = self.HEART
-        elif (rand_val < 20):
+        elif (rand_val < 10):
             self.obj = self.SPEED_UP
-        elif (rand_val < 30):
+        elif (rand_val < 15):
             self.obj = self.TIME_SUB
-        elif (rand_val < 40):
+        elif (rand_val < 20):
             self.obj = self.MOVE_STOP
+        elif(rand_val < 25):
+            self.obj = self.TIME_ADD
         else:
             self.obj = self.NONE
 
@@ -158,6 +164,8 @@ class Obstacle:
             return self.x - 20, self.y - 10, self.x + 16, self.y + 13
         elif (self.obj == self.MOVE_STOP):
             return self.x - 19, self.y - 17, self.x + 16, self.y + 17
+        elif (self.obj == self.TIME_ADD):
+            return self.x - 18, self.y - 17, self.x + 16, self.y + 16
         else:
             return self.x - 20, self.y - 8, self.x + 5, self.y + 18
 
@@ -170,6 +178,8 @@ class Obstacle:
             self.time_sub_image.draw(self.x, self.y)
         elif (self.obj == self.MOVE_STOP):
             self.move_stop_image.draw(self.x, self.y)
+        elif (self.obj == self.TIME_ADD):
+            self.time_add_image.draw(self.x, self.y)
         else:
             self.image.draw(self.x, self.y)
 
@@ -312,6 +322,7 @@ class Character:
     # 장애물 타입 값
     # ***************************************
     NONE, HEART, SPEED_UP, TIME_SUB, MOVE_STOP  = 0, 1, 2, 3, 4
+    TIME_ADD                                    = 5
 
     def __init__(self):
         # ***************************************
@@ -329,6 +340,7 @@ class Character:
         # time_sub:         시간 감소
         # move_stop:        이동 금지
         # move_stop_time:   이동 금지 시간[기본 3초]
+        # time_add:         시간 증가
         # ***************************************
         self.x, self.y      = 250, 200
         self.speed          = 15
@@ -343,6 +355,7 @@ class Character:
         self.move_stop      = False
         self.move_stop_time = 0
         self.time_sub       = False
+        self.time_add       = False
         self.frame          = 0
         self.state          = self.RIGHT_STAND
         self.key            = self.K_NONE
@@ -514,6 +527,9 @@ class Character:
                 self.move_stop_time   = time.time() + 3
                 self.speed            = 0
 
+        elif (obj == self.TIME_ADD):
+            self.time_add = True
+
         # ***************************************
         # god True 면 캐릭터 생명력 변화 없음
         # ***************************************
@@ -538,8 +554,8 @@ class Character:
     def settimesub(self):
         self.time_sub = False
 
-    def getcollisionbox(self):
-        return self.x - 10, self.y - 22, self.x + 13, self.y + 34
+    def settimeadd(self):
+        self.time_add = False
 
     def getposx(self):
         return self.x
@@ -552,6 +568,12 @@ class Character:
 
     def gettimesub(self):
         return self.time_sub
+
+    def gettimeadd(self):
+        return self.time_add
+
+    def getcollisionbox(self):
+        return self.x - 10, self.y - 22, self.x + 13, self.y + 34
 
     def draw(self):
         self.image.clip_draw(self.frame * 70, self.state * 70, 70, 70, self.x, self.y)
@@ -622,15 +644,18 @@ def lifetime():
     if character.gettimesub() == True:
         clear_time -= 3
         character.settimesub()
+    elif character.gettimeadd() == True:
+        clear_time += 3
+        character.settimeadd()
 
     # ***************************************
     # 클리어 시간과 현재 시간과의 차이를 구함
     # ***************************************
     life_time   = max(0, clear_time - time.time())
-    str_time    = datetime.datetime.fromtimestamp(life_time).strftime('%S')
+    str_time    = datetime.datetime.fromtimestamp(life_time).strftime('%M:%S')
 
     font        = load_font('HMKMRHD.TTF', 20)
-    font.draw(240, 380, str_time)
+    font.draw(225, 380, str_time)
 
     # ***************************************
     # 스테이지 3 의 클리어시간을 버티면 게임 종료
