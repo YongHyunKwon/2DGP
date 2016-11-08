@@ -490,7 +490,7 @@ def lifetime():
     str_time    = datetime.datetime.fromtimestamp(life_time).strftime('%M:%S')
 
     font        = load_font('HMKMRHD.TTF', 20)
-    font.draw(240, 380, str_time)
+    font.draw(225, 380, str_time)
 
     # ***************************************
     # 스테이지 2 의 클리어시간을 버티면 스테이지 3 전환
