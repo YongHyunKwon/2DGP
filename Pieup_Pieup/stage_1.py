@@ -36,7 +36,7 @@ class Obstacle:
     # 장애물 타입 값
     # ***************************************
     NONE, HEART, SPEED_UP, TIME_SUB, MOVE_STOP      = 0, 1, 2, 3, 4
-    TIME_ADD, ULTI                                  = 5, 6
+    TIME_ADD, ULTI,GOD                              = 5, 6, 7
 
     image           = None
     heart_image     = None
@@ -45,6 +45,7 @@ class Obstacle:
     move_stop_image = None
     time_add_image  = None
     ulti_image      = None
+    god_image       = None
 
     def __init__(self):
         self.obj = self.NONE
@@ -64,6 +65,8 @@ class Obstacle:
             Obstacle.time_add_image     = load_image('time_add.png')
         if Obstacle.ulti_image == None:
             Obstacle.ulti_image         = load_image('ultimate.png')
+        if Obstacle.god_image == None:
+            Obstacle.god_image          = load_image('god.png')
 
     #***************************************
     # make
@@ -96,6 +99,8 @@ class Obstacle:
             self.obj = self.TIME_ADD
         elif(rand_val < 30):
             self.obj = self.ULTI
+        elif(rand_val < 35):
+            self.obj = self.GOD
         else:
             self.obj = self.NONE
 
@@ -125,6 +130,8 @@ class Obstacle:
             return self.x - 18, self.y - 17, self.x + 16, self.y + 16
         elif (self.obj == self.ULTI):
             return self.x - 28, self.y - 16, self.x + 24, self.y + 25
+        elif (self.obj == self.GOD):
+            return self.x - 28, self.y - 22, self.x + 28, self.y + 20
         else:
             return self.x - 40, self.y + 12, self.x - 12, self.y + 35
 
@@ -141,6 +148,8 @@ class Obstacle:
             self.time_add_image.draw(self.x, self.y)
         elif (self.obj == self.ULTI):
             self.ulti_image.draw(self.x, self.y)
+        elif (self.obj == self.GOD):
+            self.god_image.draw(self.x, self.y)
         else:
             self.image.draw(self.x, self.y)
 
@@ -164,7 +173,7 @@ class Character:
     # 장애물 타입 값
     # ***************************************
     NONE, HEART, SPEED_UP, TIME_SUB, MOVE_STOP  = 0, 1, 2, 3, 4
-    TIME_ADD, ULTI                              = 5, 6
+    TIME_ADD, ULTI, GOD                         = 5, 6, 7
 
     def __init__(self):
         # ***************************************
@@ -332,10 +341,12 @@ class Character:
             self.time_add = True
 
         # ***************************************
-        # 화면 지우기 아이템은 최대 9개 까지만 적용
+        # 스킬은 최대 9개 까지만 적용
         # ***************************************
         elif(obj == self.ULTI):
             self.ulti_cnt = min(9, self.ulti_cnt + 1)
+        elif(obj == self.GOD):
+            self.god_cnt = min(9, self.god_cnt + 1)
 
         else:
             # ***************************************
@@ -526,9 +537,9 @@ def main():
     #***************************************
     obstacle    = [Obstacle() for i in range(10)]
     #########################################
-    # 현재는 테스트용으로 시간을 10 초만 줌
+    # 현재는 테스트용으로 시간을 60 초만 줌
     #########################################
-    clear_time  = time.time() + 10
+    clear_time  = time.time() + 60
 
     game_stop   = True
     running     = True
