@@ -36,7 +36,7 @@ class Obstacle:
     # 장애물 타입 값
     # ***************************************
     NONE, HEART, SPEED_UP, TIME_SUB, MOVE_STOP      = 0, 1, 2, 3, 4
-    TIME_ADD, ULTI,GOD                              = 5, 6, 7
+    TIME_ADD, ULTI, GOD, RAND_ITEM                  = 5, 6, 7, 8
 
     image           = None
     heart_image     = None
@@ -46,6 +46,7 @@ class Obstacle:
     time_add_image  = None
     ulti_image      = None
     god_image       = None
+    rand_item_image = None
 
     def __init__(self):
         self.obj = self.NONE
@@ -67,6 +68,8 @@ class Obstacle:
             Obstacle.ulti_image         = load_image('ultimate.png')
         if Obstacle.god_image == None:
             Obstacle.god_image          = load_image('god.png')
+        if Obstacle.rand_item_image == None:
+            Obstacle.rand_item_image    = load_image('rand_item.png')
 
     #***************************************
     # make
@@ -101,6 +104,8 @@ class Obstacle:
             self.obj = self.ULTI
         elif (rand_val < 35):
             self.obj = self.GOD
+        elif (rand_val < 40):
+            self.obj = self.RAND_ITEM
         else:
             self.obj = self.NONE
 
@@ -132,6 +137,8 @@ class Obstacle:
             return self.x - 28, self.y - 16, self.x + 24, self.y + 25
         elif (self.obj == self.GOD):
             return self.x - 28, self.y - 22, self.x + 28, self.y + 20
+        elif (self.obj == self.RAND_ITEM):
+            return  self.x - 8, self.y - 13, self.x + 8, self.y + 12
         else:
             return self.x - 20, self.y - 15, self.x + 15, self.y + 20
 
@@ -150,6 +157,8 @@ class Obstacle:
             self.ulti_image.draw(self.x, self.y)
         elif (self.obj == self.GOD):
             self.god_image.draw(self.x, self.y)
+        elif (self.obj == self.RAND_ITEM):
+            self.rand_item_image.draw(self.x, self.y)
         else:
             self.image.draw(self.x, self.y)
 
@@ -173,7 +182,7 @@ class Character:
     # 장애물 타입 값
     # ***************************************
     NONE, HEART, SPEED_UP, TIME_SUB, MOVE_STOP  = 0, 1, 2, 3, 4
-    TIME_ADD, ULTI, GOD                         = 5, 6, 7
+    TIME_ADD, ULTI, GOD, RAND_ITEM              = 5, 6, 7, 8
 
     def __init__(self):
         # ***************************************
@@ -352,6 +361,11 @@ class Character:
     # 장애물과 충돌시 장애물 타입에 따라 처리
     # ***************************************
     def damage(self, obj):
+
+        if (obj == self.RAND_ITEM):
+            rand    = random.randint(1, 7)
+            obj     = rand
+
         # ***************************************
         # 장애물이 생명력 충전일 경우 생명력 + 1
         # 최대 5개의 값을 넘지 아니함
