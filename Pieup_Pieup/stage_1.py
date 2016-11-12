@@ -22,7 +22,10 @@ game_stop   = None
 #***************************************
 class Background:
     def __init__(self):
-        self.image = load_image('stage_1.png')
+        self.image  = load_image('stage_1.png')
+        self.bgm    = load_music('stage_1.mp3')
+        self.bgm.set_volume(30)
+        self.bgm.repeat_play()
 
     def draw(self):
         self.image.draw(250, 200)
