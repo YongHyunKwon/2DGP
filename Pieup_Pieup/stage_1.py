@@ -36,7 +36,7 @@ class Obstacle:
     # 장애물 타입 값
     # ***************************************
     NONE, HEART, SPEED_UP, TIME_SUB, MOVE_STOP      = 0, 1, 2, 3, 4
-    TIME_ADD, ULTI,GOD, RAND_ITEM                   = 5, 6, 7, 8
+    TIME_ADD, ULTI,GOD, RAND_ITEM, DIE              = 5, 6, 7, 8, 9
 
     image           = None
     heart_image     = None
@@ -47,6 +47,7 @@ class Obstacle:
     ulti_image      = None
     god_image       = None
     rand_item_image = None
+    die_image       = None
 
     def __init__(self):
         self.obj = self.NONE
@@ -70,6 +71,8 @@ class Obstacle:
             Obstacle.god_image          = load_image('god.png')
         if Obstacle.rand_item_image == None:
             Obstacle.rand_item_image    = load_image('rand_item.png')
+        if Obstacle.die_image == None:
+            Obstacle.die_image          = load_image('die.png')
 
     #***************************************
     # make
@@ -104,8 +107,10 @@ class Obstacle:
             self.obj = self.ULTI
         elif(rand_val < 35):
             self.obj = self.GOD
-        elif(rand_val < 80):
+        elif(rand_val < 40):
             self.obj = self.RAND_ITEM
+        elif(rand_val < 45):
+            self.obj = self.DIE
         else:
             self.obj = self.NONE
 
@@ -139,6 +144,8 @@ class Obstacle:
             return self.x - 28, self.y - 22, self.x + 28, self.y + 20
         elif (self.obj == self.RAND_ITEM):
             return  self.x - 8, self.y - 13, self.x + 8, self.y + 12
+        elif (self.obj == self.DIE):
+            return  self.x - 10, self.y - 12, self.x + 10, self.y + 12
         else:
             return self.x - 40, self.y + 12, self.x - 12, self.y + 35
 
@@ -159,6 +166,8 @@ class Obstacle:
             self.god_image.draw(self.x, self.y)
         elif (self.obj == self.RAND_ITEM):
             self.rand_item_image.draw(self.x, self.y)
+        elif (self.obj == self.DIE):
+            self.die_image.draw(self.x, self.y)
         else:
             self.image.draw(self.x, self.y)
 
@@ -182,7 +191,7 @@ class Character:
     # 장애물 타입 값
     # ***************************************
     NONE, HEART, SPEED_UP, TIME_SUB, MOVE_STOP  = 0, 1, 2, 3, 4
-    TIME_ADD, ULTI, GOD, RAND_ITEM              = 5, 6, 7, 8
+    TIME_ADD, ULTI, GOD, RAND_ITEM, DIE         = 5, 6, 7, 8, 9
 
     def __init__(self):
         # ***************************************
@@ -361,6 +370,9 @@ class Character:
             self.ulti_cnt = min(9, self.ulti_cnt + 1)
         elif(obj == self.GOD):
             self.god_cnt = min(9, self.god_cnt + 1)
+
+        elif(obj == self.DIE):
+            return False
 
         else:
             # ***************************************
@@ -589,12 +601,13 @@ def main():
                 stagefail()
 
             # ***************************************
-            # 장애물이 케릭터와 충돌하면 make 함수를
-            # 호출해 다시 재생성 후 케릭터 생명력 1 감소
+            # 장애물이 케릭터와 충돌하면 재생성
+            # 그 외 아이템은 damage 함수에서 처리
             # ***************************************
             for stone in obstacle:
                 if collide(character, stone) == False:
-                    character.damage(stone.getobjtype())
+                    if(character.damage(stone.getobjtype()) == False):
+                        stagefail()
                     stone.make()
 
             update_canvas()
