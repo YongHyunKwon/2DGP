@@ -117,25 +117,28 @@ class Obstacle:
 
         # ***************************************
         # 0~100 사의 난수값을 가지고 장애물의 타입을 결정
+        # 기본 아이템: 3%
+        # 스킬 아이템: 3%
+        # 즉사 아이템: 0%
         # ***************************************
-        if (rand_val < 5):
+        if (rand_val < 3):
             self.obj = self.HEART
-        elif (rand_val < 10):
+        elif (rand_val < 6):
             self.obj = self.SPEED_UP
-        elif (rand_val < 15):
+        elif (rand_val < 9):
             self.obj = self.TIME_SUB
-        elif (rand_val < 20):
+        elif (rand_val < 12):
             self.obj = self.MOVE_STOP
-        elif(rand_val < 25):
+        elif(rand_val < 15):
             self.obj = self.TIME_ADD
-        elif (rand_val < 30):
+        elif(rand_val < 18):
             self.obj = self.ULTI
-        elif (rand_val < 35):
+        elif(rand_val < 21):
             self.obj = self.GOD
-        elif (rand_val < 40):
+        elif(rand_val < 24):
             self.obj = self.RAND_ITEM
-        elif (rand_val < 45):
-            self.obj = self.DIE
+        #elif(rand_val < 23):
+        #    self.obj = self.DIE
         else:
             self.obj = self.NONE
 
