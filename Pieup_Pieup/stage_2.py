@@ -196,6 +196,9 @@ class Character:
     NONE, HEART, SPEED_UP, TIME_SUB, MOVE_STOP  = 0, 1, 2, 3, 4
     TIME_ADD, ULTI, GOD, RAND_ITEM, DIE         = 5, 6, 7, 8, 9
 
+    get_item_sound  = None
+    obs_sound       = None
+
     def __init__(self):
         # ***************************************
         # dirup:            현재 KEY_UP 상태인가 아닌가
@@ -242,6 +245,13 @@ class Character:
         # ***************************************
         self.life_cnt       = 3
         self.life_image     = load_image('heart.png')
+
+        if Character.obs_sound == None:
+            Character.obs_sound = load_wav('bubble.wav')
+            Character.obs_sound.set_volume(32)
+        if Character.get_item_sound == None:
+            Character.get_item_sound = load_wav('get_item.wav')
+            Character.get_item_sound.set_volume(32)
 
     def handle_event(self, event):
         # ***************************************
@@ -434,9 +444,12 @@ class Character:
             if (self.god == True):
                 return
 
+            self.obs_sound.play()
             self.life_cnt   = self.life_cnt - 1
             self.effect.draw(self.x, self.y)
+            return
 
+        self.get_item_sound.play()
     def setgod(self):
         if (self.god_cnt > 0 and self.god == False):
             self.god        = True
@@ -616,10 +629,10 @@ def main():
     # 클리어 시간은 20 초
     #***************************************
     #########################################
-    # 현재는 테스트용으로 시간을 10 초만 줌
+    # 현재는 테스트용으로 시간을 60 초만 줌
     #########################################
     obstacle    = [Obstacle() for i in range(15)]
-    clear_time  = time.time() + 10
+    clear_time  = time.time() + 60
 
     game_stop   = True
     running     = True
