@@ -24,7 +24,7 @@ class Background:
     def __init__(self):
         self.image  = load_image('stage_2.png')
         self.bgm    = load_music('stage_2.mp3')
-        self.bgm.set_volume(30)
+        self.bgm.set_volume(10)
         self.bgm.repeat_play()
 
     def draw(self):
@@ -93,26 +93,30 @@ class Obstacle:
     # ***************************************
     def randobj(self):
         rand_val = random.randint(0, 100)
+
         # ***************************************
         # 0~100 사의 난수값을 가지고 장애물의 타입을 결정
+        # 기본 아이템: 3%
+        # 스킬 아이템: 2%
+        # 즉사 아이템: 1%
         # ***************************************
-        if (rand_val < 5):
+        if (rand_val < 3):
             self.obj = self.HEART
-        elif (rand_val < 10):
+        elif (rand_val < 6):
             self.obj = self.SPEED_UP
-        elif (rand_val < 15):
+        elif (rand_val < 9):
             self.obj = self.TIME_SUB
-        elif (rand_val < 20):
+        elif (rand_val < 12):
             self.obj = self.MOVE_STOP
-        elif(rand_val < 25):
+        elif(rand_val < 15):
             self.obj = self.TIME_ADD
-        elif (rand_val < 30):
+        elif(rand_val < 17):
             self.obj = self.ULTI
-        elif (rand_val < 35):
+        elif(rand_val < 19):
             self.obj = self.GOD
-        elif (rand_val < 40):
+        elif(rand_val < 22):
             self.obj = self.RAND_ITEM
-        elif (rand_val < 45):
+        elif(rand_val < 23):
             self.obj = self.DIE
         else:
             self.obj = self.NONE
