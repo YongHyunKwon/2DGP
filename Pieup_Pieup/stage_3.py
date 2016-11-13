@@ -26,7 +26,7 @@ class Background:
     def __init__(self):
         self.image  = load_image('stage_3.png')
         self.bgm    = load_music('stage_3.mp3')
-        self.bgm.set_volume(30)
+        self.bgm.set_volume(10)
         self.bgm.repeat_play()
 
     def draw(self):
@@ -363,6 +363,9 @@ class Character:
     NONE, HEART, SPEED_UP, TIME_SUB, MOVE_STOP  = 0, 1, 2, 3, 4
     TIME_ADD, ULTI, GOD, RAND_ITEM, DIE         = 5, 6, 7, 8, 9
 
+    get_item_sound  = None
+    obs_sound       = None
+
     def __init__(self):
         # ***************************************
         # dirupdown:        현재 KEY_UP,DOWN 상태인가 아닌가
@@ -409,6 +412,13 @@ class Character:
         # ***************************************
         self.life_cnt       = 3
         self.life_image     = load_image('heart.png')
+
+        if Character.obs_sound == None:
+            Character.obs_sound = load_wav('meteor.wav')
+            Character.obs_sound.set_volume(32)
+        if Character.get_item_sound == None:
+            Character.get_item_sound = load_wav('get_item.wav')
+            Character.get_item_sound.set_volume(32)
 
     def handle_event(self, event):
         # ***************************************
@@ -592,8 +602,12 @@ class Character:
             if (self.god == True):
                 return
 
+            self.obs_sound.play()
             self.life_cnt = self.life_cnt - 1
             self.effect.draw(self.x, self.y)
+            return
+
+        self.get_item_sound.play()
 
     def setgod(self):
         if (self.god_cnt > 0 and self.god == False):
