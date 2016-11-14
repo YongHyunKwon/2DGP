@@ -86,7 +86,7 @@ class Obstacle:
     #***************************************
     # make
     # 장애물 재생성 함수
-    # x, y 값은 정해진 위치에 따라 생성, 속도 7~12
+    # x, y 값은 정해진 위치에 따라 생성, 속도 5~10
     #***************************************
     def make(self):
         self.randobj()
@@ -101,7 +101,7 @@ class Obstacle:
         elif(self.select_pos == self.DOWN_START):
             self.x, self.y = random.randint(-20, 520), 420
 
-        self.speed      = random.randint(7, 12)
+        self.speed      = random.randint(5, 10)
         #***************************************
         # 장애물의 방향 값 설정
         # x: ↑[0],↓[1] // y: →[0],←[1]
@@ -118,8 +118,8 @@ class Obstacle:
         # ***************************************
         # 0~100 사의 난수값을 가지고 장애물의 타입을 결정
         # 기본 아이템: 3%
-        # 스킬 아이템: 3%
-        # 즉사 아이템: 0%
+        # 스킬 아이템: 2%
+        # 즉사 아이템: 1%
         # ***************************************
         if (rand_val < 3):
             self.obj = self.HEART
@@ -131,14 +131,14 @@ class Obstacle:
             self.obj = self.MOVE_STOP
         elif(rand_val < 15):
             self.obj = self.TIME_ADD
-        elif(rand_val < 18):
+        elif(rand_val < 17):
             self.obj = self.ULTI
-        elif(rand_val < 21):
+        elif(rand_val < 19):
             self.obj = self.GOD
-        elif(rand_val < 24):
+        elif(rand_val < 22):
             self.obj = self.RAND_ITEM
-        #elif(rand_val < 23):
-        #    self.obj = self.DIE
+        elif(rand_val < 23):
+            self.obj = self.DIE
         else:
             self.obj = self.NONE
 
@@ -252,7 +252,7 @@ class GuidedObstacle:
     # ***************************************
     # make
     # 장애물 재생성 함수
-    # x, y 값은 정해진 위치에 따라 생성, 속도 10~15
+    # x, y 값은 정해진 위치에 따라 생성, 속도 8~13
     # ***************************************
     def make(self, chr_x, chr_y):
         self.select_pos = random.randint(0, 3)
@@ -268,7 +268,7 @@ class GuidedObstacle:
 
         self.chr_x      = chr_x
         self.chr_y      = chr_y
-        self.speed      =random.randint(10, 15)
+        self.speed      = random.randint(8, 13)
         self.before_pos = 0
         # ***************************************
         # 장애물의 방향 값 설정
@@ -791,8 +791,8 @@ def main():
     back_ground = Background()
     character   = Character()
     #***************************************
-    # 스테이지 3 에서 기본 장애물 10, 유도 장애물 2
-    # 클리어 시간은 30초
+    # 스테이지 3 에서 기본 장애물 12, 유도 장애물 2
+    # 클리어 시간은 40초
     #***************************************
     obstacle    = [Obstacle() for i in range(10)]
     guided_obs  = [GuidedObstacle() for i in range(2)]
