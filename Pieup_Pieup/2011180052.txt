@@ -1,0 +1,103 @@
+Tue Nov 15 01:23:58 2016 +0900 stage_modify
+Tue Nov 15 01:03:45 2016 +0900 stage_3_balance_modify
+Tue Nov 15 01:02:52 2016 +0900 stage_2_balance_modify
+Tue Nov 15 01:01:55 2016 +0900 stage_1_balance_modify
+Mon Nov 14 06:22:51 2016 +0900 stage_3_rand_balance_modify
+Mon Nov 14 06:19:11 2016 +0900 stage_2_rand_balance_modify
+Mon Nov 14 06:17:58 2016 +0900 stage_1_rand_balance_modify
+Mon Nov 14 02:06:26 2016 +0900 stage_3_sound_complete
+Mon Nov 14 02:04:04 2016 +0900 stage_2_sound_complete
+Mon Nov 14 02:02:52 2016 +0900 stage_1_sound_complete
+Sun Nov 13 03:37:22 2016 +0900 stage_3_bgm_complete_modify
+Sun Nov 13 03:36:02 2016 +0900 stage_2_bgm_complete_and_modify
+Sun Nov 13 03:35:04 2016 +0900 stage_1_bgm_complete and modify
+Sun Nov 13 02:56:30 2016 +0900 get_item_sound
+Sun Nov 13 02:56:09 2016 +0900 meteor_collision_sound
+Sun Nov 13 02:55:42 2016 +0900 bubble_collision_sound
+Sun Nov 13 02:55:06 2016 +0900 stone_collision_sound
+Sun Nov 13 02:54:21 2016 +0900 stage_3_bgm
+Sun Nov 13 02:53:48 2016 +0900 stage_2_bgm
+Sun Nov 13 02:53:13 2016 +0900 stage_1_bgm
+Sat Nov 12 17:08:27 2016 +0900 stage_3_die_item_complete
+Sat Nov 12 17:07:53 2016 +0900 stage_2_die_item_complete
+Sat Nov 12 17:07:17 2016 +0900 stage_1_die_item_complete
+Sat Nov 12 17:05:31 2016 +0900 die_image
+Sat Nov 12 07:11:56 2016 +0900 stage_3_rand_itme_complete
+Sat Nov 12 07:11:26 2016 +0900 stage_2_rand_item_complete
+Sat Nov 12 07:00:23 2016 +0900 stage_1_rand_item_complete
+Sat Nov 12 06:59:16 2016 +0900 rand_item_image
+Fri Nov 11 00:45:13 2016 +0900 stage_3_god_itme_complete
+Fri Nov 11 00:44:35 2016 +0900 stage_2_god_item_complete
+Fri Nov 11 00:44:12 2016 +0900 stage_1_god_item_complete
+Thu Nov 10 18:27:48 2016 +0900 stage_3_ulti_item_complete
+Thu Nov 10 18:27:18 2016 +0900 stage_2_ulti_item_complete
+Thu Nov 10 18:26:32 2016 +0900 stage_1_ulti_item_complete
+Tue Nov 8 20:31:40 2016 +0900 stage_2_time_print_modify
+Tue Nov 8 20:30:40 2016 +0900 stage_3_time_add_complete
+Tue Nov 8 20:18:21 2016 +0900 stage_2_time_add_complete
+Tue Nov 8 20:13:16 2016 +0900 move_stop_image
+Tue Nov 8 20:12:18 2016 +0900 stage_1_time_add_complete
+Tue Nov 8 20:07:48 2016 +0900 time_add_image
+Sun Nov 6 18:05:06 2016 +0900 stage_3_move_stop_complete
+Sun Nov 6 18:02:50 2016 +0900 stage_2_move_stop_complete
+Sun Nov 6 18:02:05 2016 +0900 stage_1_move_stop_complete
+Sat Nov 5 20:19:14 2016 +0900 time_sub_image
+Sat Nov 5 20:18:44 2016 +0900 stage_1_time_sub_complete
+Sat Nov 5 20:17:52 2016 +0900 stage_2_time_sub_complete
+Sat Nov 5 20:09:23 2016 +0900 stage_3_time_sub_complete
+Sat Nov 5 20:00:52 2016 +0900 stage_3_speed_up_complete
+Sat Nov 5 19:53:11 2016 +0900 stage_2_speed_up_complete
+Fri Nov 4 01:30:16 2016 +0900 speed_up_image
+Fri Nov 4 01:29:46 2016 +0900 stage_1_speed_up_complete
+Thu Nov 3 19:29:49 2016 +0900 stage2_heart_complete
+Thu Nov 3 19:29:14 2016 +0900 stage1_heart_complete
+Thu Nov 3 19:26:00 2016 +0900 stage_3_heart_modify
+Wed Nov 2 00:33:56 2016 +0900 heart_obj_complete
+Sat Oct 29 23:18:27 2016 +0900 ultimate_complete
+Fri Oct 28 05:24:08 2016 +0900 ultimate_skill_add
+Thu Oct 27 05:51:16 2016 +0900 god_complete
+Wed Oct 26 03:10:00 2016 +0900 god_skill_modify
+Wed Oct 26 03:01:27 2016 +0900 god_skill_add
+Tue Oct 25 00:27:41 2016 +0900 -
+Tue Oct 18 18:01:53 2016 +0900 2차 발표 자료
+Tue Oct 18 17:55:02 2016 +0900 일시정지 추가
+Mon Oct 17 23:54:59 2016 +0900 2차 발표자료
+Mon Oct 17 23:53:09 2016 +0900 발표자료
+Mon Oct 17 21:05:57 2016 +0900 시연 코드
+Sun Oct 16 21:44:08 2016 +0900 Pieup_Pieup
+Sat Oct 15 19:29:55 2016 +0900 stage2
+Sat Oct 15 19:27:22 2016 +0900 stage3
+Fri Oct 14 16:42:54 2016 +0900 stage2
+Fri Oct 14 16:41:24 2016 +0900 stage1
+Fri Oct 14 04:38:10 2016 +0900 stage1
+Thu Oct 13 01:26:28 2016 +0900 stage3
+Thu Oct 13 01:26:04 2016 +0900 stage2
+Thu Oct 13 01:25:51 2016 +0900 stage1
+Thu Oct 13 01:25:23 2016 +0900 stage2
+Thu Oct 13 01:24:57 2016 +0900 stage1
+Sat Oct 8 20:39:47 2016 +0900 stage3
+Sat Oct 8 20:35:09 2016 +0900 stage_3 complete
+Fri Oct 7 14:51:44 2016 +0900 stage2
+Fri Oct 7 14:48:29 2016 +0900 stage1, stage2
+Thu Sep 29 02:21:52 2016 +0900 -
+Thu Sep 29 02:10:30 2016 +0900 -
+Thu Sep 29 02:08:57 2016 +0900 stage_3_folder
+Thu Sep 29 02:06:00 2016 +0900 2016_09_28_2dgp
+Thu Sep 29 02:04:52 2016 +0900 stage_3_folder
+Tue Sep 27 15:03:44 2016 +0900 stage_2_folder
+Mon Sep 26 20:46:05 2016 +0900 folder create
+Mon Sep 26 20:41:20 2016 +0900 stage_1_py_code
+Mon Sep 26 20:35:39 2016 +0900 Revert "item_or_skill_resource"
+Sun Sep 25 20:32:10 2016 +0900 item_or_skill_resource
+Sun Sep 25 20:31:31 2016 +0900 Delete item_or_skill.zip
+Sun Sep 25 20:23:13 2016 +0900 stage_3_resource
+Sun Sep 25 20:22:17 2016 +0900 Delete stage_3.zip
+Sun Sep 25 00:44:06 2016 +0900 stage_2_resource
+Sun Sep 25 00:43:23 2016 +0900 Delete stage_2.zip
+Fri Sep 23 15:21:48 2016 +0900 stage_1_resource
+Fri Sep 23 15:21:25 2016 +0900 Delete stage_1.zip
+Fri Sep 23 15:19:26 2016 +0900 stage_1_resource
+Fri Sep 23 15:17:56 2016 +0900 Delete stage_1.zip
+Thu Sep 22 22:12:15 2016 +0900 game_resource
+Thu Sep 22 01:11:56 2016 +0900 Add files via upload
+Thu Sep 22 01:11:02 2016 +0900 Create README.md
