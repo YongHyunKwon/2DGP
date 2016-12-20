@@ -792,14 +792,11 @@ def main():
     character   = Character()
     #***************************************
     # 스테이지 3 에서 기본 장애물 12, 유도 장애물 2
-    # 클리어 시간은 40초
+    # 클리어 시간은 10초
     #***************************************
     obstacle    = [Obstacle() for i in range(10)]
     guided_obs  = [GuidedObstacle() for i in range(2)]
-    #########################################
-    # 현재는 테스트용으로 시간을 15 초만 줌
-    #########################################
-    clear_time  = time.time() + 15
+    clear_time  = time.time() + 10
 
     game_stop   = True
     running     = True
@@ -815,16 +812,13 @@ def main():
 
             back_ground.draw()
             character.draw()
-            character.drawcollision()
 
             for meteor in obstacle:
                 meteor.draw()
-                meteor.drawcollision()
                 meteor.update()
 
             for guided_meteor in guided_obs:
                 guided_meteor.draw()
-                guided_meteor.drawcollision()
                 guided_meteor.update(character.getposx(), character.getposy())
 
             lifetime()
