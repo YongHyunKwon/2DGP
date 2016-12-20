@@ -582,13 +582,10 @@ def main():
 
     #***************************************
     # 스테이지 1 에서 장애물은 13개
-    # 클리어 시간은 60초
+    # 클리어 시간은 30초
     #***************************************
     obstacle    = [Obstacle() for i in range(13)]
-    #########################################
-    # 현재는 테스트용으로 시간을 60 초만 줌
-    #########################################
-    clear_time  = time.time() + 60
+    clear_time  = time.time() + 30
 
     game_stop   = True
     running     = True
@@ -604,11 +601,9 @@ def main():
 
             back_ground.draw()
             character.draw()
-            character.drawcollision()
 
             for stone in obstacle:
                 stone.draw()
-                stone.drawcollision()
                 stone.update()
 
             lifetime()
