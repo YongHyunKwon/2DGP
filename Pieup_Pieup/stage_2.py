@@ -630,13 +630,10 @@ def main():
     character   = Character()
     #***************************************
     # 스테이지 2 에서 장애물은 15개
-    # 클리어 시간은 50 초
+    # 클리어 시간은 20 초
     #***************************************
-    #########################################
-    # 현재는 테스트용으로 시간을 60 초만 줌
-    #########################################
     obstacle    = [Obstacle() for i in range(15)]
-    clear_time  = time.time() + 60
+    clear_time  = time.time() + 20
 
     game_stop   = True
     running     = True
@@ -652,11 +649,9 @@ def main():
 
             back_ground.draw()
             character.draw()
-            character.drawcollision()
 
             for bubble in obstacle:
                 bubble.draw()
-                bubble.drawcollision()
                 bubble.update()
 
             lifetime()
